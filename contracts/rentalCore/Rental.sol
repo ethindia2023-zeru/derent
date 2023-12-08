@@ -9,14 +9,16 @@ contract Rental is IRental, Storage {
         address owner,
         uint256 securityDeposit,
         uint256 rent,
+        uint256 waitingPeriod,
         string memory location
-    ) external {
+    ) external override {
         Property memory property = Property(
             ++totalProperties,
             msg.sender,
             address(0),
             securityDeposit,
             rent,
+            waitingPeriod,
             location,
             true,
             false,
@@ -25,22 +27,24 @@ contract Rental is IRental, Storage {
             true,
             false
         );
-        ownerToPropertyIds[msg.sender].push(property);
+        propertyIdToProperty[totalProperties] = property;
+        ownerToPropertyIds[msg.sender].push(totalProperties);
     }
 
-    function updateListingStatus(uint256 propertyId, bool isReserved, bool listingStatus) external {
+    function updateListingStatus(uint256 propertyId, bool listingStatus) external override {
         Property storage property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only owner can update the listing status");
         property.propertyListingStatus = listingStatus;
         if (listingStatus) {
             property.isReserved = false;
             property.isConfirmedByOwner = false;
-            property.isConfirmedByTenent = false;
+            property.isConfirmedByTenant = false;
             property.rentPaid = false;
             property.tenant = address(0);
         }
     }
 
-    function claimSecurityDeposit(uint256 propertyId) external {
+    function claimSecurityDeposit(uint256 propertyId) external override {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only owner can claim the security deposit");
         require(property.isConfirmedByTenant == false, "Error: Already Confirmed by tenant");
@@ -50,16 +54,19 @@ contract Rental is IRental, Storage {
         require(sent, "Failed to send Ether");
     }
 
-    function getListingByOwnerAddress(address _owner) external view returns (Property[] memory) {
-        uint256[] propertyIds = ownerToPropertyIds[_owner];
-        Property[] memory properties = new Property[](propertyIds);
-        for (uint256 i = 0; i < propertyIds; i++) {
+    function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
+        uint256[] memory propertyIds = ownerToPropertyIds[_owner];
+        Property[] memory properties = new Property[](propertyIds.length);
+        for (uint256 i = 0; i < propertyIds.length; i++) {
             properties[i] = propertyIdToProperty[propertyIds[i]];
         }
         return properties;
     }
 
-    function getRentStatus(uint256 propertyId) external view {}
+    function getRentStatus(uint256 propertyId) external view override returns (bool) {
+        Property memory property = propertyIdToProperty[propertyId];
+        return property.rentPaid;
+    }
 
     function getRentStatusByOwnerAddress(address _owner) external view {}
 
