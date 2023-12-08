@@ -71,13 +71,12 @@ contract Rental is IRental, Storage {
         uint256[] memory rentPaid;
         uint256[] memory rentNotPaid;
         uint256[] memory propertyIds = ownerToPropertyIds[owner];
-        for(uint256 i = 0; i < propertyIds.length; i++){
+        for (uint256 i = 0; i < propertyIds.length; i++) {
             Storage.Property storage property = propertyIdToProperty[propertyIds[i]];
-            require(property.owner <= msg.sender, "Only owner can view the rent status");
-            if(property.rentPaid){
+            require(property.owner == msg.sender, "Only owner can view the rent status");
+            if (property.rentPaid) {
                 rentPaid[i] = propertyIds[i];
-            }
-            else{
+            } else {
                 rentNotPaid[i] = propertyIds[i];
             }
         }
@@ -85,7 +84,7 @@ contract Rental is IRental, Storage {
     }
 
     // user functions
-    function paySecurityDeposit(uint256 propertyId) external payable{
+    function paySecurityDeposit(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
         require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
@@ -95,7 +94,7 @@ contract Rental is IRental, Storage {
         property.isReserved = true;
     }
 
-    function payRent(uint256 propertyId) external payable{
+    function payRent(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
         require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
@@ -108,27 +107,26 @@ contract Rental is IRental, Storage {
     function confirmOccupation(uint256 propertyId, bool isConfirmed) external {
         Storage.Property storage property = propertyIdToProperty[propertyId];
 
-        if(msg.sender == property.owner) {
+        if (msg.sender == property.owner) {
             property.isConfirmedByOwner = isConfirmed;
             return;
-        }
-        else if(msg.sender == property.tenant) {
+        } else if (msg.sender == property.tenant) {
             property.isConfirmedByTenant = isConfirmed;
             return;
-        }
-        else{
+        } else {
             revert("You are not authorized to confirm occupation");
         }
     }
 
-    function getAllPropertyListings() external view returns (Storage.Property[] memory){
+    function getAllPropertyListings() external view returns (Storage.Property[] memory) {
         Storage.Property[] memory properties = new Storage.Property[](totalProperties);
-        for(uint256 i = 0; i < totalProperties; i++){
+        for (uint256 i = 0; i < totalProperties; i++) {
             Storage.Property storage property = propertyIdToProperty[i];
             properties[i] = property;
         }
         return properties;
     }
+
     // Function to receive Ether. msg.data must be empty
     receive() external payable {}
 
