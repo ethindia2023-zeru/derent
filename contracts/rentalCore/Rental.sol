@@ -14,6 +14,7 @@ contract Rental is IRental, Storage {
         Property memory property = Property(
             ++totalProperties,
             msg.sender,
+            address(0),
             securityDeposit,
             rent,
             location,
@@ -35,12 +36,28 @@ contract Rental is IRental, Storage {
             property.isConfirmedByOwner = false;
             property.isConfirmedByTenent = false;
             property.rentPaid = false;
+            property.tenant = address(0);
         }
     }
 
-    function claimSecurityDeposit(uint256 propertyId) external {}
+    function claimSecurityDeposit(uint256 propertyId) external {
+        Property memory property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only owner can claim the security deposit");
+        require(property.isConfirmedByTenant == false, "Error: Already Confirmed by tenant");
+        require(property.isConfirmedByOwner == false, "Error: Already Confirmed by owner");
+        // security amount is already inside this rental contract just transfer it to owner
+        bool sent = payable(msg.sender).send(property.securityDeposit);
+        require(sent, "Failed to send Ether");
+    }
 
-    function getListingByOwnerAddress(address _owner) external view {}
+    function getListingByOwnerAddress(address _owner) external view returns (Property[] memory) {
+        uint256[] propertyIds = ownerToPropertyIds[_owner];
+        Property[] memory properties = new Property[](propertyIds);
+        for (uint256 i = 0; i < propertyIds; i++) {
+            properties[i] = propertyIdToProperty[propertyIds[i]];
+        }
+        return properties;
+    }
 
     function getRentStatus(uint256 propertyId) external view {}
 
@@ -55,4 +72,10 @@ contract Rental is IRental, Storage {
     function confirmOccupation(uint256 propertyId, bool isConfirmed) external {}
 
     function getAllPropertyListings() external view {}
+
+    // Function to receive Ether. msg.data must be empty
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
 }

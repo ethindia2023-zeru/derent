@@ -5,12 +5,13 @@ contract Storage {
     struct Property {
         uint256 propertyId;
         address owner;
+        address tenant;
         uint256 securityDeposit;
         uint256 rent;
         uint256 waitingPeriod; // to claim the deposit and list it again
         string propertyLocation;
         bool isReserved;
-        bool isConfirmedByTenent;
+        bool isConfirmedByTenant;
         bool isConfirmedByOwner;
         bool rentPaid;
         bool propertyListingStatus;
