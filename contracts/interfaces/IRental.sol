@@ -6,7 +6,7 @@ interface IRental {
     struct AddListingStruct {
         uint256 propertyId;
         address owner;
-        uint256 initialDeposit;
+        uint256 securityDeposit;
         uint256 rent;
         string location;
     }
@@ -19,7 +19,7 @@ interface IRental {
         string memory location
     ) external;
 
-    function updateListingStatus(uint256 propertyId) external;
+    function updateListingStatus(uint256 propertyId, bool isReserved) external;
 
     function claimSecurityDeposit(uint256 propertyId) external;
 
