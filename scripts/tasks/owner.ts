@@ -19,13 +19,9 @@ export async function testOwnerFunctions(testToken: Contract) {
   await testToken.connect(receiver).paySecurityDeposit(1, { value: securityDeposit });
   console.log("after paying the security deposit");
 
-  //   await testToken.connect(receiver).confirmOccupation(1, true);
-  //   await testToken.connect(sender).confirmOccupation(1, true);
-  //   console.log("occupation confirmed");
-
-  //expect(await testToken.connect(deployer).updateListingStatus(1, false)).should.be.reverted;
-  await testToken.connect(sender).claimSecurityDeposit(1);
-  console.log("claimed the security deposit");
+  await testToken.connect(receiver).confirmOccupation(1, true);
+  await testToken.connect(sender).confirmOccupation(1, true);
+  console.log("occupation confirmed");
 
   const properties = await testToken.connect(sender).getListingByOwnerAddress(sender.address);
   console.log("properties of owner are", sender.address, properties);
@@ -35,4 +31,16 @@ export async function testOwnerFunctions(testToken: Contract) {
 
   const rentInfo = await testToken.connect(sender).getRentStatusByOwnerAddress(sender.address);
   console.log("rentinfo:", rentInfo);
+
+  await testToken.connect(receiver).payRent(1, { value: rent });
+  console.log("rent paid");
+
+  await testToken.connect(receiver).getAllPropertyListings();
+
+  //expect(await testToken.connect(deployer).updateListingStatus(1, false)).should.be.reverted;
+  await testToken.connect(receiver).confirmOccupation(1, false);
+  await testToken.connect(sender).confirmOccupation(1, false);
+
+  await testToken.connect(sender).claimSecurityDeposit(1);
+  console.log("claimed the security deposit");
 }
