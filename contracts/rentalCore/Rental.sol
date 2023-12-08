@@ -68,26 +68,30 @@ contract Rental is IRental, Storage {
 
     function getRentStatusByOwnerAddress(address owner) external view returns (uint256[] memory, uint256[] memory) {
         // get rent status of each property
-        uint256[] memory rentPaid;
-        uint256[] memory rentNotPaid;
+        uint256[] memory rentPaid = new uint256[](ownerToPropertyIds[owner].length);
+        uint256[] memory rentNotPaid = new uint256[](ownerToPropertyIds[owner].length);
         uint256[] memory propertyIds = ownerToPropertyIds[owner];
+
         for (uint256 i = 0; i < propertyIds.length; i++) {
             Storage.Property storage property = propertyIdToProperty[propertyIds[i]];
             require(property.owner == msg.sender, "Only owner can view the rent status");
+
             if (property.rentPaid) {
                 rentPaid[i] = propertyIds[i];
             } else {
                 rentNotPaid[i] = propertyIds[i];
             }
         }
+
         return (rentPaid, rentNotPaid);
     }
 
     // user functions
     function paySecurityDeposit(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
-        require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
-        require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
+        // no need to check before security deposit
+        //require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
+        //require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
         require(!property.isReserved, "Security deposit has already been paid");
         require(property.securityDeposit <= msg.value, "Insufficient security deposit amount");
         property.tenant = msg.sender;
