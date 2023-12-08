@@ -25,6 +25,8 @@ interface IRental {
 
     function claimSecurityDeposit(uint256 propertyId) external;
 
+        function claimRent (uint256 propertyId) external;
+
     function getListingByOwnerAddress(address _owner) external view returns (Storage.Property[] memory);
 
     function getRentStatus(uint256 propertyId) external view returns (bool);

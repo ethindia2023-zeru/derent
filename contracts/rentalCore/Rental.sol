@@ -23,7 +23,9 @@ contract Rental is IRental, Storage {
             false,
             false,
             true,
-            false
+            false,
+            0,
+            0
         );
         propertyIdToProperty[totalProperties] = property;
         ownerToPropertyIds[msg.sender].push(totalProperties);
@@ -50,6 +52,23 @@ contract Rental is IRental, Storage {
         // security amount is already inside this rental contract just transfer it to owner
         bool sent = payable(msg.sender).send(property.securityDeposit);
         require(sent, "Failed to send Ether");
+        tenantsSecurityDeposit[msg.sender] = 0;
+    }
+
+    function claimRent (uint256 propertyId) external override {
+        Property memory property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only owner can claim the rent");
+        require(property.rentPaid == true, "Error: Rent not paid");
+        require(property.rentPaidTimestamp + property.waitingPeriod <= block.timestamp, "Error: Waiting period not over");
+        // rent amount is already inside this rental contract just transfer it to owner
+        require(tenantsRent[msg.sender] <= 0, "Error: Rent not paid");
+        bool sent = payable(msg.sender).send(property.rent);
+        require(sent, "Failed to send Ether");
+        tenantsRent[msg.sender] = 0;
+    }
+
+    function raiseDispute (uint256 propertyId) internal {
+        Property memory property = propertyIdToProperty[propertyId];
     }
 
     function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
@@ -93,6 +112,8 @@ contract Rental is IRental, Storage {
         require(property.securityDeposit <= msg.value, "Insufficient security deposit amount");
         property.tenant = msg.sender;
         property.isReserved = true;
+        property.securityDepositTimestamp = block.timestamp;
+        tenantsSecurityDeposit[msg.sender] = msg.value;
     }
 
     function payRent(uint256 propertyId) external payable{
@@ -102,6 +123,8 @@ contract Rental is IRental, Storage {
         require(!property.rentPaid, "Rent has already been paid");
         require(property.rent <= msg.value, "Insufficient rent amount");
         property.rentPaid = true;
+        property.rentPaidTimestamp = block.timestamp;
+        tenantsRent[msg.sender] = msg.value;
     }
 
     // common functions
