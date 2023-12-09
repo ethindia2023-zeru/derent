@@ -12,8 +12,6 @@ import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 
 const page = () => {
-  const [advancePay, setAdvancePay] = useState(false);
-
   const dispatch = useDispatch();
   const propertyListing = useSelector(state => state.home.propertyListing);
 
@@ -47,7 +45,7 @@ const page = () => {
       {propertyListing &&
         propertyListing
           .filter(property => {
-            if (property.tenant == address && !property.isConfirmedOccupation) return true;
+            if (property.highestBidderTenant == address && !property.isConfirmedOccupation) return true;
             return false;
           })
           .map((property, index) => (

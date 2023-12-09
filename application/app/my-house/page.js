@@ -1,38 +1,119 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { payAdvance } from "@/actions/payAdvance";
+import { GetTransactionProvider } from "@/helpers/wallet/GetTransactionProvider";
+import { useToast } from "@/components/ui/use-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { loadPropertyListing } from "@/store/slices/homeSlice";
+import { ethers } from "ethers";
+import { useAccount } from "wagmi";
+import { payRent } from "@/actions/payRent";
+import { leaveProperty } from "@/actions/leaveProperty";
 
 const page = () => {
-  return (
-    // <div className="flex justify-center w-full">
-  <Card className=" w-full mx-3 ml-32">
-    <CardHeader className=" mb-16">
-      <CardTitle>Rent</CardTitle>
-      <CardDescription>Pay you rent with just one click</CardDescription>
-    </CardHeader>
-    <CardContent className="w-full mx-auto">
-    <div className="grid grid-cols-3 mb-32 place-content-center">
-      <div className="flex flex-col">Due Date: <span>Due Date</span></div>
-      <div className="flex flex-col">Advance: <span>₹Advance</span></div>
-      <div className="flex flex-col">Initial Deposit: <span>₹house.initialdeposit</span></div>
-    </div>
-    <div className="grid grid-cols-3 mb-10 mx-auto">
-      <div className="flex flex-col">Rent: <span>₹Rent</span></div>
-      <div className="flex flex-col">Status <span>Due</span></div>
-      <div className="flex flex-col">Due Date:<span>12-10-2020</span></div>
-    </div>
-    </CardContent>
-    <CardFooter className="w-[900px]">
-      <Button className="mx-auto w-fit">Pay Rent</Button>
-    </CardFooter>
-  </Card>
-  )
-}
+  const dispatch = useDispatch();
+  const propertyListing = useSelector(state => state.home.propertyListing);
 
-export default page
+  const { toast } = useToast();
+  const signer = GetTransactionProvider();
+  const { address } = useAccount();
+
+  const handlePayRent = async (propertyId, rent) => {
+    const success = await payRent(signer?.provider, propertyId, rent);
+    if (success) {
+      toast({
+        variant: "successful",
+        title: "Transaction Success",
+        description: "Transaction sent successfully",
+      });
+      console.log("success", success);
+
+      dispatch(loadPropertyListing({ pro: signer?.provider }));
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: "Transaction failed",
+      });
+      console.log("failed");
+    }
+  };
+
+  const handleLeaveProperty = async propertyId => {
+    const success = await leaveProperty(signer?.provider, propertyId);
+    if (success) {
+      toast({
+        variant: "successful",
+        title: "Transaction Success",
+        description: "Transaction sent successfully",
+      });
+      console.log("success", success);
+
+      dispatch(loadPropertyListing({ pro: signer?.provider }));
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: "Transaction failed",
+      });
+      console.log("failed");
+    }
+  };
+
+  return (
+    <>
+      {propertyListing &&
+        propertyListing
+          .filter(property => {
+            if (property.tenant == address && property.isConfirmedOccupation) return true;
+            return false;
+          })
+          .map((property, index) => (
+            <div key={index} className="flex justify-center">
+              <Card className="">
+                <CardHeader className="">
+                  <CardTitle>Rent</CardTitle>
+                  <CardDescription>Pay you rent with just one click</CardDescription>
+                </CardHeader>
+                <CardContent className="">
+                  <div className="grid grid-cols-3 mb-32 place-content-center">
+                    <div className="flex flex-col">
+                      Due Date: <span>Due Date</span>
+                    </div>
+                    <div className="flex flex-col">
+                      Advance: <span>₹Advance</span>
+                    </div>
+                    <div className="flex flex-col">
+                      Initial Deposit: <span>₹house.initialdeposit</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 mb-10 mx-auto">
+                    <div className="flex flex-col">
+                      Rent: <span>₹Rent</span>
+                    </div>
+                    <div className="flex flex-col">
+                      Status <span>Due</span>
+                    </div>
+                    <div className="flex flex-col">
+                      Due Date:<span>12-10-2020</span>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="">
+                  <Button className="" onClick={() => handlePayRent(property.propertyId, property.rent)}>
+                    Pay Rent
+                  </Button>
+                  <Button className="" onClick={() => handleLeaveProperty(property.propertyId)}>
+                    Leave
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          ))}
+    </>
+  );
+};
+
+export default page;

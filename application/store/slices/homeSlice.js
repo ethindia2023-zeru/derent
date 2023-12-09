@@ -46,7 +46,7 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
         securityDepositClaimedStatus: propertyListing.securityDepositClaimedStatus,
         securityDepositTimestamp: parseFloat(propertyListing.securityDepositTimestamp.toString()),
         tenant: propertyListing.tenant,
-        waitingPeriodSecurityDeposit: propertyListing.waitingPeriodSecurityDeposit,
+        waitingPeriodSecurityDeposit: propertyListing.waitingPeriodSecurityDeposit.toString(),
       });
     }
 

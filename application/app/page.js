@@ -18,14 +18,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 import { Button } from "@/components/ui/button";
 import { paySecurityDeposit } from "@/actions/paySecurityDeposit";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { GetTransactionProvider } from "@/helpers/wallet/GetTransactionProvider";
+import { useToast } from "@/components/ui/use-toast";
+import { loadPropertyListing } from "@/store/slices/homeSlice";
+import { bidOnProperty } from "@/actions/bidOnProperty";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [bid, setBid] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
 
+  const { toast } = useToast();
+
+  const dispatch = useDispatch();
   const propertyListing = useSelector(state => state.home.propertyListing);
   const auctionStarted = useSelector(state => state.home.auctionStarted);
 
@@ -45,8 +52,43 @@ export default function Home() {
   const handlePayInitialDeposit = async (propertyId, securityDeposit) => {
     const success = await paySecurityDeposit(signer?.provider, propertyId, securityDeposit);
     if (success) {
+      toast({
+        variant: "successful",
+        title: "Transaction Success",
+        description: "Transaction sent successfully",
+      });
       console.log("success", success);
+
+      dispatch(loadPropertyListing({ pro: signer?.provider }));
+      setOpenDialog(!openDialog);
     } else {
+      toast({
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: "Transaction failed",
+      });
+      console.log("failed");
+    }
+  };
+
+  const handleBidOnProperty = async propertyId => {
+    const success = await bidOnProperty(signer?.provider, propertyId, ethers.utils.parseEther(bid.toString()));
+    if (success) {
+      toast({
+        variant: "successful",
+        title: "Transaction Success",
+        description: "Transaction sent successfully",
+      });
+      console.log("success", success);
+
+      dispatch(loadPropertyListing({ pro: signer?.provider }));
+      setOpenDialog(!openDialog);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: "Transaction failed",
+      });
       console.log("failed");
     }
   };
@@ -56,6 +98,10 @@ export default function Home() {
     const newBid = parseFloat(value);
     console.log("newBid: ", newBid);
     setBid(newBid);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(!openDialog);
   };
 
   return (
@@ -90,12 +136,13 @@ export default function Home() {
             {propertyListing &&
               Object.values(propertyListing)
                 .filter(house => {
+                  if (house.isReserved) return false;
                   if (house.propertyId == 0) return false;
                   if (house.isAuction) return false;
                   return true;
                 })
                 .map((house, index) => (
-                  <Dialog key={index}>
+                  <Dialog key={index} open={openDialog} onOpenChange={handleOpenDialog}>
                     <DialogTrigger>
                       <RentCard
                         key={index}
@@ -152,6 +199,8 @@ export default function Home() {
             {propertyListing &&
               Object.values(propertyListing)
                 .filter(house => {
+                  if (house.isReserved) return false;
+                  if (house.propertyId == 0) return false;
                   if (!house.isAuction) return false;
                   return true;
                 })
@@ -188,7 +237,7 @@ export default function Home() {
                                 <CardDescription>Please come back after 5</CardDescription>
                               )}
                             </CardHeader>
-                            {auctionStarted && (
+                            {!auctionStarted && (
                               <CardContent>
                                 <div className="flex flex-col items-center justify-between mb-10">
                                   <div className="flex items-center justify-between space-x-[120px] pb-6">
@@ -220,7 +269,12 @@ export default function Home() {
                                     />{" "}
                                   </div>
                                 </div>
-                                <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
+                                <Button
+                                  className=" mx-auto w-fit flex justify-center"
+                                  onClick={() => handleBidOnProperty(house.propertyId)}
+                                >
+                                  Place Bid
+                                </Button>
                               </CardContent>
                             )}
                           </Card>
