@@ -20,7 +20,15 @@ contract Storage {
         bool securityDepositClaimedStatus;
         uint256 rentPaidTimestamp;
         uint256 securityDepositTimestamp;
+        //Auction
+        bool isAuction;
+        uint256 bid;
+        address highestBidderTenant;
     }
+    //Auction
+    bool auctionStarted;
+
+    
     uint256 totalProperties;
     mapping(uint256 => Property) propertyIdToProperty;
     mapping(address => uint256[]) ownerToPropertyIds;

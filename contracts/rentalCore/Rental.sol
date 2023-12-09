@@ -4,6 +4,29 @@ import { IRental } from "../interfaces/IRental.sol";
 import { Storage } from "./Storage.sol";
 
 contract Rental is IRental, Storage {
+
+    //auction
+    function startAuction() external {
+        auctionStarted = !auctionStarted;
+    }
+
+    function bidOnProperty(uint256 newBid, uint256 propertyId) external {
+        Property storage property = propertyIdToProperty[propertyId];
+        require(auctionStarted, "Error: Auction not started");
+        require(property.isAuction, "Error: Property not on auction");
+        if(property.bid < newBid){
+            property.bid = newBid;
+            property.highestBidderTenant = msg.sender;
+        }
+    }
+
+    function getBidWinnerForProperty(uint256 propertyId) external view returns (address) {
+        Property memory property = propertyIdToProperty[propertyId];
+        require(property.isAuction, "Error: Property not on auction");
+        require(!auctionStarted, "Error: Auction not stopped");
+        return property.highestBidderTenant;
+    }
+    
     // owner functions
     function addListing(
         uint256 advance,
@@ -29,7 +52,10 @@ contract Rental is IRental, Storage {
             true,
             false,
             0,
-            0
+            0,
+            false,
+            0,
+            address(0)
         );
         propertyIdToProperty[totalProperties] = property;
         ownerToPropertyIds[msg.sender].push(totalProperties);
@@ -88,7 +114,50 @@ contract Rental is IRental, Storage {
         require(sent, "Failed to send Ether");
     }
 
-    function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
+    // user functions
+    function paySecurityDeposit(uint256 propertyId) external payable{
+        Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
+        require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
+        require(!property.isReserved, "Security deposit has already been paid");
+        require(property.securityDeposit <= msg.value, "Insufficient security deposit amount");
+        property.tenant = msg.sender;
+        property.isReserved = true;
+        property.securityDepositTimestamp = block.timestamp;
+        tenantsSecurityDeposit[msg.sender] = msg.value;
+    }
+
+    function payRent(uint256 propertyId) external payable{
+        Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
+        require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
+        require(!property.rentPaid, "Rent has already been paid");
+        require(property.rent <= msg.value, "Insufficient rent amount");
+        property.rentPaid = true;
+        tenantsRent[msg.sender] = msg.value;
+    }
+
+    function confirmOccupation(uint256 propertyId) external payable{
+        Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.tenant, "Only the contract owner can call this function");
+        require(msg.value >= property.advance, "Insufficient advance amount");
+
+        if(msg.sender == property.tenant) {
+            property.isConfirmedOccupation = true;
+        }
+    }
+
+//commonGetFunctions
+    function getAllPropertyListings() external view returns (Storage.Property[] memory){
+        Storage.Property[] memory properties = new Storage.Property[](totalProperties);
+        for(uint256 i = 0; i < totalProperties; i++){
+            Storage.Property storage property = propertyIdToProperty[i];
+            properties[i] = property;
+        }
+        return properties;
+    }
+
+        function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
         uint256[] memory propertyIds = ownerToPropertyIds[_owner];
         Property[] memory properties = new Property[](propertyIds.length);
         for (uint256 i = 0; i < propertyIds.length; i++) {
@@ -120,50 +189,6 @@ contract Rental is IRental, Storage {
         }
 
         return (rentPaid, rentNotPaid);
-    }
-
-    // user functions
-    function paySecurityDeposit(uint256 propertyId) external payable {
-        Storage.Property storage property = propertyIdToProperty[propertyId];
-        // no need to check before security deposit
-        //require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
-        //require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
-        require(!property.isReserved, "Security deposit has already been paid");
-        require(property.securityDeposit <= msg.value, "Insufficient security deposit amount");
-        property.tenant = msg.sender;
-        property.isReserved = true;
-        property.securityDepositTimestamp = block.timestamp;
-        tenantsSecurityDeposit[msg.sender] = msg.value;
-    }
-
-    function payRent(uint256 propertyId) external payable {
-        Storage.Property storage property = propertyIdToProperty[propertyId];
-        require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
-        require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
-        require(!property.rentPaid, "Rent has already been paid");
-        require(property.rent <= msg.value, "Insufficient rent amount");
-        property.rentPaid = true;
-        tenantsRent[msg.sender] = msg.value;
-    }
-
-    // common functions
-    function confirmOccupation(uint256 propertyId) external payable {
-        Storage.Property storage property = propertyIdToProperty[propertyId];
-        require(msg.sender == property.tenant, "Only the contract owner can call this function");
-        require(msg.value >= property.advance, "Insufficient advance amount");
-
-        if (msg.sender == property.tenant) {
-            property.isConfirmedOccupation = true;
-        }
-    }
-
-    function getAllPropertyListings() external view returns (Storage.Property[] memory) {
-        Storage.Property[] memory properties = new Storage.Property[](totalProperties);
-        for (uint256 i = 0; i < totalProperties; i++) {
-            Storage.Property storage property = propertyIdToProperty[i];
-            properties[i] = property;
-        }
-        return properties;
     }
 
     // Function to receive Ether. msg.data must be empty
