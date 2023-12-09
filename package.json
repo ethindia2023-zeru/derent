@@ -10,7 +10,8 @@
     "clean": "rm -rf ./artifacts ./cache ./typechain ",
     "deploy": "npx hardhat run --network hardhat scripts/deploy.ts",
     "deploy-arbitrumGoerli": "npx hardhat run --network arbitrumGoerli scripts/deploy.ts",
-    "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts",
+    "deploy-scroll": "npx hardhat run --network scroll_testnet scripts/deploy.ts",
+    "tasks": "npx hardhat run --network arbitrumGoerli scripts/tasks/rental.ts",
     "node": "npx hardhat node"
   },
   "author": "amanusk",

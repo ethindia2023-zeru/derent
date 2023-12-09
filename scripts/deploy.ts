@@ -5,6 +5,7 @@
 import { ethers } from "hardhat";
 import { Contract, ContractFactory } from "ethers";
 import { registerContractInJsonDb } from "../helpers/contract-helpers";
+import { testOwnerFunctions } from "./tasks/owner";
 
 async function main(): Promise<void> {
   const mnemonic: string = process.env.MNEMONIC || "";
@@ -16,9 +17,10 @@ async function main(): Promise<void> {
   const TestTokenFactory: ContractFactory = await ethers.getContractFactory("Rental");
   const deployer = ethers.Wallet.fromMnemonic(mnemonic);
   const balance = await ethers.provider.getBalance(deployer.address);
-  console.log("Balance:", balance);
+  console.log("Balance:", balance, deployer.address);
   const rentalContract: Contract = await TestTokenFactory.deploy();
   await rentalContract.deployed();
+  await testOwnerFunctions(deployer, rentalContract);
   //await registerContractInJsonDb(rentalContract.toUpperCase(), rentalContract);
   const balance1 = await ethers.provider.getBalance(deployer.address);
   console.log("Balance After:", balance1);
