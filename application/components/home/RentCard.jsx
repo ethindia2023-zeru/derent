@@ -1,4 +1,3 @@
-import { location } from "@/assets";
 import { ethers } from "ethers";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
