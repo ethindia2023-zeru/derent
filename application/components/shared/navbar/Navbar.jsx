@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useProvider } from "wagmi";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useConnectModal, useAccountModal, useChainModal } from "@rainbow-me/rainbowkit";
@@ -23,6 +23,7 @@ const DropDown = () => {
   // for routing
   const router = useRouter();
   const dispatch = useDispatch();
+  const pro = useProvider();
 
   useEffect(() => {
     dispatch(loadPropertyListing({ pro }));

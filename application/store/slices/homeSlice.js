@@ -14,14 +14,12 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   try {
     const propertyListings = await rental_contract.getAllPropertyListings();
     console.log(propertyListings);
-    return propertyListings;
+    return {
+      propertyListings,
+    };
   } catch (err) {
     console.log(err);
   }
-
-  return {
-    propertyListings,
-  };
 });
 
 const initialState = {
@@ -39,11 +37,11 @@ export const homeSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(loadReserveSummary.pending, state => {})
-      .addCase(loadReserveSummary.fulfilled, (state, action) => {
+      .addCase(loadPropertyListing.pending, state => {})
+      .addCase(loadPropertyListing.fulfilled, (state, action) => {
         state.propertyListings = action.payload.propertyListings;
       })
-      .addCase(loadReserveSummary.rejected, (state, { error }) => {
+      .addCase(loadPropertyListing.rejected, (state, { error }) => {
         console.log(error);
       });
     /////////////////////////////////////////////////////////////////////////////////////////////////
