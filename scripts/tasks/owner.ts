@@ -78,7 +78,7 @@ export async function testOwnerFunctions(testToken: Contract) {
   await testToken.connect(owner).claimRent(3);
   console.log("rent claimed my owner");
 
-  console.log("renant doesn't pay the rent for 2 months");
+  console.log("tenant doesn't pay the rent for 2 months");
 
   await testToken.connect(owner).removeTenantFromProperty(3);
   console.log("tenant removed by owner");
@@ -92,7 +92,7 @@ export async function testOwnerFunctions(testToken: Contract) {
   await testToken.startAuction();
   console.log("auction stopped");
 
-  const bidder = await testToken.connect(deployer).getBidWinnerForProperty(3);
+  let bidder = await testToken.connect(deployer).getBidWinnerForProperty(3);
   console.log("winner of the bid", bidder);
 
   //4.
@@ -106,6 +106,38 @@ export async function testOwnerFunctions(testToken: Contract) {
   // added to the auction
   // tenant 2 bids on the auction
   // wins, bid on property, getBit winner for property
+
+  await testToken.connect(owner).addListing(advance, securityDeposit, rent, waitingPeriod, true, location);
+  console.log("added the listing");
+
+  await testToken.connect(tenant).paySecurityDeposit(4, { value: securityDeposit });
+  console.log("after paying the security deposit");
+
+  await testToken.connect(tenant).confirmOccupation(4, { value: advance });
+  console.log("occupation confirmed by paying rent");
+
+  await testToken.connect(tenant).payRent(4, { value: rent });
+  console.log("rent paid");
+
+  await testToken.connect(owner).claimRent(4);
+  console.log("rent claimed my owner");
+
+  console.log("tenant leaves the property");
+
+  await testToken.connect(tenant).leaveProperty(4);
+  console.log("tenant removed by owner");
+
+  await testToken.startAuction();
+  console.log("property automatically added for auction price");
+
+  await testToken.connect(deployer).bidOnProperty(4, parseEther("11"));
+  console.log("tenant 2 bid 11 ETH on the property");
+
+  await testToken.startAuction();
+  console.log("auction stopped");
+
+  bidder = await testToken.connect(deployer).getBidWinnerForProperty(4);
+  console.log("winner of the bid", bidder);
 
   //get all properties listing (from graphQL)
   // get listing by owneraddress

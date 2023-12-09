@@ -190,7 +190,7 @@ contract Rental is IRental, Storage {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(msg.sender == property.tenant, "Only the property tenant can call this function");
         require(
-            block.timestamp - property.rentPaidTimestamp < 60 days,
+            !(block.timestamp - property.rentPaidTimestamp < 1 seconds),
             "Cannot leave property after 60 days of not paying the rent"
         );
         // send security deposit to the owner
