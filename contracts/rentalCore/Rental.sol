@@ -9,10 +9,11 @@ contract Rental is IRental, Storage {
         auctionStarted = !auctionStarted;
     }
 
-    function bidOnProperty(uint256 newBid, uint256 propertyId) external {
+    function bidOnProperty(uint256 propertyId, uint256 newBid) external {
         Property storage property = propertyIdToProperty[propertyId];
         require(auctionStarted, "Error: Auction not started");
         require(property.isAuction, "Error: Property not on auction");
+        require(!property.isReserved, "already reserved cannot bid");
         if (property.bid < newBid) {
             property.bid = newBid;
             property.highestBidderTenant = msg.sender;
@@ -110,22 +111,11 @@ contract Rental is IRental, Storage {
     //     emit updateListingStatusEvent(propertyId, property.owner, listingStatus);
     // }
 
-    function claimSecurityDeposit(uint256 propertyId) external override {
-        Property memory property = propertyIdToProperty[propertyId];
-        require(msg.sender == property.owner, "Only owner can claim the security deposit");
-        require(property.isConfirmedByTenant == false, "Error: Already Confirmed by tenant");
-        require(property.isConfirmedByOwner == false, "Error: Already Confirmed by owner");
-        // security amount is already inside this rental contract just transfer it to owner
-        bool sent = payable(msg.sender).send(property.securityDeposit);
-        require(sent, "Failed to send Ether");
-        tenantsSecurityDeposit[msg.sender] = 0;
-    }
-
     function claimRent(uint256 propertyId) external override {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only owner can claim the rent");
         require(property.rentPaid == true, "Error: Rent not paid");
-        require(block.timestamp - property.rentPaidTimestamp <= 30 days, "Error: Waiting period not over");
+        require(block.timestamp - property.rentPaidTimestamp > 1 seconds, "Error: Waiting period not over");
 
         // rent amount is already inside this rental contract just transfer it to owner
         require(tenantsRent[msg.sender] <= 0, "Error: Rent not paid");
@@ -135,16 +125,11 @@ contract Rental is IRental, Storage {
         property.rentPaidTimestamp = block.timestamp;
     }
 
-    function raiseDispute(uint256 propertyId) internal {
-        Property memory property = propertyIdToProperty[propertyId];
-        require(msg.sender == property.owner, "Only the contract owner can call this function");
-    }
-
     function raiseDisputeSecurityDeposit(uint256 propertyId) external {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only the contract owner can call this function");
-        require(property.isConfirmedOccupation, "Tenant has not confirmed the occupation by paying advance");
-        require((block.timestamp - property.securityDepositTimestamp) > 5 days, "Waiting period not over");
+        //require(property.isConfirmedOccupation, "Tenant has not confirmed the occupation by paying advance");
+        require((block.timestamp - property.securityDepositTimestamp) >= 1 seconds, "Waiting period not over");
         require(tenantsSecurityDeposit[property.tenant] > 0, "Tenant has not paid the security deposit");
         bool sent = payable(msg.sender).send(property.securityDeposit);
         require(sent, "Failed to send Ether");
@@ -162,9 +147,9 @@ contract Rental is IRental, Storage {
     // user functions
     function paySecurityDeposit(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
-        require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
-        require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
-        require(!property.isReserved, "Security deposit has already been paid");
+        //require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
+        //require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
+        require(!property.isReserved, "Property already reserved!");
         require(property.securityDeposit <= msg.value, "Insufficient security deposit amount");
         property.tenant = msg.sender;
         property.isReserved = true;
@@ -192,12 +177,55 @@ contract Rental is IRental, Storage {
 
     function confirmOccupation(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
-        require(msg.sender == property.tenant, "Only the contract owner can call this function");
+        require(msg.sender == property.tenant, "Only the reserved tenant can call this function");
         require(msg.value >= property.advance, "Insufficient advance amount");
 
-        if (msg.sender == property.tenant) {
-            property.isConfirmedOccupation = true;
-        }
+        property.isConfirmedOccupation = true;
+        property.isConfirmedByOwner = true;
+        property.isConfirmedByTenant = true;
+        property.rentPaidTimestamp = block.timestamp;
+    }
+
+    function leaveProperty(uint256 propertyId) external {
+        Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.tenant, "Only the property tenant can call this function");
+        require(
+            block.timestamp - property.rentPaidTimestamp < 60 days,
+            "Cannot leave property after 60 days of not paying the rent"
+        );
+        // send security deposit to the owner
+        bool sent = payable(property.owner).send(property.securityDeposit);
+        require(sent, "Failed to send security deposit to owner");
+        property.securityDeposit = 0;
+        uint256 advance = tenantsAdvance[msg.sender];
+        tenantsAdvance[msg.sender] = 0;
+        sent = payable(property.owner).send((advance * 2000) / 10000);
+        require(sent, "Failed to send 20% advance to owner");
+        sent = payable(msg.sender).send((advance * 8000) / 10000);
+        require(sent, "Failed to send 80% advance to tenant");
+        property.tenant = address(0);
+        property.isConfirmedOccupation = false;
+        property.isReserved = false;
+        property.propertyListingStatus = true;
+    }
+
+    function removeTenantFromProperty(uint256 propertyId) external {
+        Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only the property owner can call this function");
+        //require(block.timestamp - property.rentPaidTimestamp > 60 days, "You cannot remove tenant before 60 days");
+        require(block.timestamp - property.rentPaidTimestamp > 1 seconds, "You cannot remove tenant before 60 days");
+        // send security deposit to the owner
+        bool sent = payable(property.owner).send(property.securityDeposit);
+        require(sent, "Failed to send security deposit to owner");
+        property.securityDeposit = 0;
+        uint256 advance = tenantsAdvance[msg.sender];
+        tenantsAdvance[msg.sender] = 0;
+        sent = payable(property.owner).send(advance);
+        require(sent, "Failed to send 100% advance to owner");
+        property.tenant = address(0);
+        property.isConfirmedOccupation = false;
+        property.isReserved = false;
+        property.propertyListingStatus = true;
     }
 
     //commonGetFunctions
