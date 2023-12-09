@@ -11,8 +11,9 @@
     "deploy": "npx hardhat run --network coverage scripts/deploy.ts",
     "deploy-arbitrumGoerli": "npx hardhat run --network arbitrumGoerli scripts/deploy.ts",
     "tasks": "npx hardhat run --network coverage scripts/tasks/rental.ts",
-    "node": "npx hardhat node",
-    "deployTask": "hardhat --network coverage deploy"
+    "deployTask": "hardhat --network coverage deploy",
+    "deploy-scroll": "npx hardhat run --network scroll_testnet scripts/deploy.ts",
+    "node": "npx hardhat node"
   },
   "author": "ethindia2023-zeru",
   "license": "MIT",
@@ -41,6 +42,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
+    "@types/lowdb": "^1.0.15",
     "bignumber.js": "^9.1.2",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",

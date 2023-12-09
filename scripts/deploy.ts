@@ -3,6 +3,7 @@ import { Contract, ContractFactory, Signer } from "ethers";
 import { Rental__factory } from "../typechain";
 import fs from "fs";
 import { ChainIdsToNetwork } from "./ChainIds";
+import { testOwnerFunctions } from "./tasks/owner";
 async function main(): Promise<void> {
   const [deployer, owner, tenant]: Signer[] = await ethers.getSigners();
   const chainId: number = await ethers.provider.getNetwork().then(network => network.chainId);
@@ -10,8 +11,8 @@ async function main(): Promise<void> {
   console.log("Chain ID: ", ChainIdsToNetwork(chainId));
   console.log("Chain name: ", chainName);
   console.log("Deployer: ", await deployer.getAddress());
-  const lendingPoolImpl: Contract = await new Rental__factory(deployer).deploy();
-  console.log("Rental deployed to: ", lendingPoolImpl.address);
+  const rentalContract: Contract = await new Rental__factory(deployer).deploy();
+  console.log("Rental deployed to: ", rentalContract.address);
 
   // Read the existing JSON file
   let contractAddresses: any = {};
@@ -24,12 +25,13 @@ async function main(): Promise<void> {
   // Append the address to the respective chain
   contractAddresses["Rental"] = contractAddresses["Rental"] || {};
   contractAddresses["Rental"][chainName] = {
-    address: lendingPoolImpl.address,
+    address: rentalContract.address,
     deployer: await deployer.getAddress(),
   };
+  await testOwnerFunctions(rentalContract);
   // Add the address for the 'arbitrum' chain here
   // contractAddresses["Rental"]["arbitrum"] = {
-  //   "address": lendingPoolImpl.address,
+  //   "address": rentalContract.address,
   //   "deployer": await deployer.getAddress()
   // };
 
