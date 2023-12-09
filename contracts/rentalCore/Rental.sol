@@ -4,7 +4,6 @@ import { IRental } from "../interfaces/IRental.sol";
 import { Storage } from "./Storage.sol";
 
 contract Rental is IRental, Storage {
-
     //auction
     function startAuction() external {
         auctionStarted = !auctionStarted;
@@ -14,7 +13,7 @@ contract Rental is IRental, Storage {
         Property storage property = propertyIdToProperty[propertyId];
         require(auctionStarted, "Error: Auction not started");
         require(property.isAuction, "Error: Property not on auction");
-        if(property.bid < newBid){
+        if (property.bid < newBid) {
             property.bid = newBid;
             property.highestBidderTenant = msg.sender;
         }
@@ -26,7 +25,11 @@ contract Rental is IRental, Storage {
         require(!auctionStarted, "Error: Auction not stopped");
         return property.highestBidderTenant;
     }
-    
+
+    function getIsAuction() external view returns (bool) {
+        return auctionStarted;
+    }
+
     // owner functions
     function addListing(
         uint256 advance,
@@ -115,7 +118,7 @@ contract Rental is IRental, Storage {
     }
 
     // user functions
-    function paySecurityDeposit(uint256 propertyId) external payable{
+    function paySecurityDeposit(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
         require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
@@ -127,7 +130,7 @@ contract Rental is IRental, Storage {
         tenantsSecurityDeposit[msg.sender] = msg.value;
     }
 
-    function payRent(uint256 propertyId) external payable{
+    function payRent(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(property.isConfirmedByTenant, "Tenant has not confirmed the occupation");
         require(property.isConfirmedByOwner, "Owner has not confirmed the occupation");
@@ -137,27 +140,27 @@ contract Rental is IRental, Storage {
         tenantsRent[msg.sender] = msg.value;
     }
 
-    function confirmOccupation(uint256 propertyId) external payable{
+    function confirmOccupation(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
         require(msg.sender == property.tenant, "Only the contract owner can call this function");
         require(msg.value >= property.advance, "Insufficient advance amount");
 
-        if(msg.sender == property.tenant) {
+        if (msg.sender == property.tenant) {
             property.isConfirmedOccupation = true;
         }
     }
 
-//commonGetFunctions
-    function getAllPropertyListings() external view returns (Storage.Property[] memory){
+    //commonGetFunctions
+    function getAllPropertyListings() external view returns (Storage.Property[] memory) {
         Storage.Property[] memory properties = new Storage.Property[](totalProperties);
-        for(uint256 i = 0; i < totalProperties; i++){
+        for (uint256 i = 0; i < totalProperties; i++) {
             Storage.Property storage property = propertyIdToProperty[i];
             properties[i] = property;
         }
         return properties;
     }
 
-        function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
+    function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
         uint256[] memory propertyIds = ownerToPropertyIds[_owner];
         Property[] memory properties = new Property[](propertyIds.length);
         for (uint256 i = 0; i < propertyIds.length; i++) {
