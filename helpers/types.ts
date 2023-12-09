@@ -5,6 +5,16 @@ export interface SymbolMap<T> {
   [symbol: string]: T;
 }
 
+export enum eNetworks {
+  arbitrum_goerli = "arbitrum",
+  scroll_testnet = "scroll",
+  hardhat = "hardhat",
+  mantle_testnet = "mantle",
+  base_testnet = "base",
+  zetachain_testnet = "zetachain",
+  x1_testnet = "x1",
+}
+
 export type eNetwork =
   | eEthereumNetwork
   | ePolygonNetwork
