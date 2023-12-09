@@ -34,6 +34,7 @@ contract Rental is IRental, Storage {
     event listingAdded(
         uint256 indexed propertyId,
         address indexed owner,
+        string propertyName,
         address tenant,
         uint256 advance,
         uint256 securityDeposit,
@@ -54,10 +55,12 @@ contract Rental is IRental, Storage {
         uint256 rent,
         uint256 waitingPeriodSecurityDeposit,
         bool isAuction,
-        string memory location
+        string memory location,
+        string memory propertyName
     ) external override {
         Property memory property = Property(
             ++totalProperties,
+            propertyName,
             msg.sender,
             address(0),
             advance,
@@ -81,6 +84,7 @@ contract Rental is IRental, Storage {
         emit listingAdded(
             totalProperties,
             msg.sender,
+            propertyName,
             address(0),
             advance,
             securityDeposit,
@@ -272,12 +276,12 @@ contract Rental is IRental, Storage {
         return (rentPaid, rentNotPaid);
     }
 
-    function getDueDate(uint256 propertyId) external returns (uint256) {
+    function getDueDate(uint256 propertyId) external view returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.rentPaidTimestamp + 30 days;
     }
 
-    function getAdvanceDueDate(uint256 propertyId) external returns (uint256) {
+    function getAdvanceDueDate(uint256 propertyId) external view returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.securityDepositTimestamp + 15 days;
     }

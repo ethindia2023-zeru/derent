@@ -9,9 +9,10 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   const chainName = ChainIdsToNetwork(chainId);
 
   const rentalAddress = getContractAddress("Rental", chainName);
+  console.log("address-------:", rentalAddress);
   const rental_contract = RentalContract(pro, rentalAddress);
 
-  console.log(chainId, chainName, rentalAddress);
+  console.log("Niceeee:", chainId, chainName, rentalAddress);
 
   try {
     const propertyListing = await rental_contract.getAllPropertyListings();

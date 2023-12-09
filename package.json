@@ -1,5 +1,5 @@
 {
-  "name": "hardhat-template",
+  "name": "derent",
   "version": "0.0.3",
   "description": "",
   "main": "index.js",
@@ -14,7 +14,7 @@
     "node": "npx hardhat node",
     "deployTask": "hardhat --network coverage deploy"
   },
-  "author": "amanusk",
+  "author": "ethindia2023-zeru",
   "license": "MIT",
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
