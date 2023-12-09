@@ -2,45 +2,50 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react'
-import { location } from '@/assets'
+import { location, notification } from '@/assets'
 import { useRouter } from 'next/navigation';
 export const SideBarRentals = () => {
-    // a state to store the active state of the sidebar
-    const router=useRouter();
-    const [active,setActive]=useState("My Listing");
-    // a funciton to handle the navigation
-    const handleNavigate=(link)=>{
-        setActive(link.label)
+  // a state to store the active state of the sidebar
+  const router = useRouter();
+  const [active, setActive] = useState("My Listing");
+  // a funciton to handle the navigation
+  const handleNavigate = (link) => {
+    setActive(link.label)
+  }
+  const NAV_ICONS = [
+    {
+      label: "My Listing",
+      image: location,
+      link: "/my-rentals"
+    },
+    {
+      label: "Manage",
+      image: location,
+      link: "/my-rentals/dues"
+    },
+    {
+      label: "Notifications",
+      image: notification,
+      link: "/my-rentals/notifications"
     }
-    const NAV_ICONS=[
-        {
-            label:"My Listing",
-            image:location,
-            link:"/my-rentals"
-        },
-        {
-             label:"Manage",
-             image:location,
-             link:"/my-rentals/dues"
-         }
-    ]
+  ]
 
   return (
     <div
-    className="md:flex h-[100vh] min-w-[250px] md:flex-col gap-10 hidden px-5 py-5 lg:flex lg:flex-col "
+      className="md:flex h-[100vh] min-w-[250px] md:flex-col gap-10 hidden px-5 py-5 lg:flex lg:flex-col "
     >
       {
-        NAV_ICONS.map((link)=>{
-            return (
-                <Link href={link.link}>
-                    <div onClick={()=>handleNavigate(link)} className={`flex px-3 rounded-lg py-2 gap-5 ${link.label===active&&'bg-[#2A3E5A]'} justify-start items-center hover:bg-[#2A3E5A] cursor-pointer transition-all duration-300 text-[#B0C5E7] hover:text-white`}>
-                    <Image src={link.image} alt={link.label} width={36} height={36}/>
-                    <p className=" ">{link.label}</p>
-                    </div>
-                </Link>
-            )
+        NAV_ICONS.map((link) => {
+          return (
+            <Link href={link.link}>
+              <div onClick={() => handleNavigate(link)} className={`flex px-3 rounded-lg py-2 gap-5 ${link.label === active && 'bg-[#2A3E5A]'} justify-start items-center hover:bg-[#2A3E5A] cursor-pointer transition-all duration-300 text-[#B0C5E7] hover:text-white`}>
+                <Image src={link.image} alt={link.label} width={36} height={36} />
+                <p className=" ">{link.label}</p>
+              </div>
+            </Link>
+          )
         })
-      } 
+      }
     </div>
   )
 }
