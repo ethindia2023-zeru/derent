@@ -1,25 +1,10 @@
 import { commonActionSetup } from "./helper/commonHelper";
 
-export const addListing = async (
-  signer,
-  advance,
-  securityDeposit,
-  rent,
-  waitingPeriodSecurityDeposit,
-  isAuction,
-  location,
-) => {
+export const paySecurityDeposit = async propertyId => {
   try {
     const rental_contract = commonActionSetup(signer);
 
-    const data = rental_contract.addListing(
-      advance,
-      securityDeposit,
-      rent,
-      waitingPeriodSecurityDeposit,
-      isAuction,
-      location,
-    );
+    const data = rental_contract.paySecurityDeposit(propertyId);
     const txResult = await data.wait();
     console.log(txResult);
     if (txResult) {

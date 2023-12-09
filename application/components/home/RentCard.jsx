@@ -1,8 +1,7 @@
-import { location } from "@/assets"
-import Image from "next/image"
+import { location } from "@/assets";
+import Image from "next/image";
 
-export const RentCard = ({image,key,price,bhk,city,state}) => {
-
+export const RentCard = ({ title, image, key, price, address }) => {
   return (
     <div className="w-[80%] cursor-pointer hover:scale-105 transition-all duration-300 hover:bg-slate-600 px-2 py-4 rounded">
     <Image

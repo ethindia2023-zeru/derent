@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 contract Storage {
     struct Property {
         uint256 propertyId;
+        string propertyName;
         address owner;
         address tenant;
         uint256 advance;
