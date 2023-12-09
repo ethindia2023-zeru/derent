@@ -2,8 +2,6 @@
 pragma solidity ^0.8.0;
 import { Storage } from "../rentalCore/Storage.sol";
 
-import { Storage } from "../rentalCore/Storage.sol";
-
 interface IRental {
     // owner functions
     struct AddListingStruct {
