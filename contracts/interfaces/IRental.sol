@@ -18,7 +18,8 @@ interface IRental {
         uint256 rent,
         uint256 waitingPeriodSecurityDeposit,
         bool isAuction,
-        string memory location
+        string memory location,
+        string memory propertyName
     ) external;
 
     // function updateListingStatus(uint256 propertyId, bool listingStatus) external;
