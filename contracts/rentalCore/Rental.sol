@@ -4,21 +4,26 @@ import { IRental } from "../interfaces/IRental.sol";
 import { Storage } from "./Storage.sol";
 
 contract Rental is IRental, Storage {
+    
+    // owner functions
     function addListing(
+        uint256 advance,
         uint256 securityDeposit,
         uint256 rent,
-        uint256 waitingPeriod,
+        uint256 waitingPeriodSecurityDeposit,
         string memory location
     ) external override {
         Property memory property = Property(
             ++totalProperties,
             msg.sender,
             address(0),
+            advance,
             securityDeposit,
             rent,
-            waitingPeriod,
+            waitingPeriodSecurityDeposit,
             location,
             true,
+            false,
             false,
             false,
             false,
@@ -59,16 +64,30 @@ contract Rental is IRental, Storage {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only owner can claim the rent");
         require(property.rentPaid == true, "Error: Rent not paid");
-        require(property.rentPaidTimestamp + property.waitingPeriod <= block.timestamp, "Error: Waiting period not over");
+        require(block.timestamp - property.rentPaidTimestamp <= 30 days, "Error: Waiting period not over");
+
         // rent amount is already inside this rental contract just transfer it to owner
         require(tenantsRent[msg.sender] <= 0, "Error: Rent not paid");
         bool sent = payable(msg.sender).send(property.rent);
         require(sent, "Failed to send Ether");
         tenantsRent[msg.sender] = 0;
+        property.rentPaidTimestamp = block.timestamp;
     }
 
-    function raiseDispute (uint256 propertyId) internal {
+    function raiseDispute (uint256 propertyId) internal{
         Property memory property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only the contract owner can call this function");
+
+    }
+
+    function raiseDisputeSecurityDeposit (uint256 propertyId) external {
+        Property memory property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.owner, "Only the contract owner can call this function");
+        require(property.isConfirmedOccupation, "Tenant has not confirmed the occupation by paying advance");
+        require((block.timestamp - property.securityDepositTimestamp) > 5 days , "Waiting period not over");
+        require(tenantsSecurityDeposit[property.tenant] > 0, "Tenant has not paid the security deposit");
+        bool sent = payable(msg.sender).send(property.securityDeposit);
+        require(sent, "Failed to send Ether");
     }
 
     function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
@@ -123,24 +142,17 @@ contract Rental is IRental, Storage {
         require(!property.rentPaid, "Rent has already been paid");
         require(property.rent <= msg.value, "Insufficient rent amount");
         property.rentPaid = true;
-        property.rentPaidTimestamp = block.timestamp;
         tenantsRent[msg.sender] = msg.value;
     }
 
     // common functions
-    function confirmOccupation(uint256 propertyId, bool isConfirmed) external {
+    function confirmOccupation(uint256 propertyId) external payable{
         Storage.Property storage property = propertyIdToProperty[propertyId];
+        require(msg.sender == property.tenant, "Only the contract owner can call this function");
+        require(msg.value >= property.advance, "Insufficient advance amount");
 
-        if(msg.sender == property.owner) {
-            property.isConfirmedByOwner = isConfirmed;
-            return;
-        }
-        else if(msg.sender == property.tenant) {
-            property.isConfirmedByTenant = isConfirmed;
-            return;
-        }
-        else{
-            revert("You are not authorized to confirm occupation");
+        if(msg.sender == property.tenant) {
+            property.isConfirmedOccupation = true;
         }
     }
 

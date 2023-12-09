@@ -15,9 +15,10 @@ interface IRental {
     }
 
     function addListing(
+        uint256 advance,
         uint256 initialDeposit,
         uint256 rent,
-        uint256 waitingPeriod,
+        uint256 waitingPeriodSecurityDeposit,
         string memory location
     ) external;
 
@@ -39,7 +40,7 @@ interface IRental {
     function payRent(uint256 propertyId) external payable;
 
     // common functions
-    function confirmOccupation(uint256 propertyId, bool isConfirmed) external;
+    function confirmOccupation(uint256 propertyId) external payable;
 
     function getAllPropertyListings() external view returns (Storage.Property[] memory);
 }
