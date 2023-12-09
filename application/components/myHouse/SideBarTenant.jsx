@@ -6,7 +6,7 @@ import { location } from '@/assets';
 
 export const SideBarTenant = () => {
    // a state to store the active state of the sidebar
-   const [active,setActive]=useState('assignment');
+   const [active,setActive]=useState('My Listing');
    // a funciton to handle the navigation
    const handleNavigate=(link)=>{
        setActive(link.label)
@@ -15,12 +15,12 @@ export const SideBarTenant = () => {
     {
         label:"My Listing",
         image:location,
-        link:""
+        link:"/my-house"
     },
     {
         label:"Initial Deposit",
         image:location,
-        link:"/my-houses/deposit"
+        link:"/my-house/deposit"
     }
 ]
     return (

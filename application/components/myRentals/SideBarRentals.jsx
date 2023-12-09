@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export const SideBarRentals = () => {
     // a state to store the active state of the sidebar
     const router=useRouter();
-    const [active,setActive]=useState("");
+    const [active,setActive]=useState("My Listing");
     // a funciton to handle the navigation
     const handleNavigate=(link)=>{
         setActive(link.label)
@@ -16,7 +16,7 @@ export const SideBarRentals = () => {
         {
             label:"My Listing",
             image:location,
-            link:""
+            link:"/my-rentals"
         },
         {
             label:"Initial Lisitng",
