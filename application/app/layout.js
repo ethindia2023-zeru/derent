@@ -1,17 +1,16 @@
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import Head from "next/head"; // Import Head component for metadata
+
+import Head from "next/head";
 import { Inter } from "next/font/google";
-// import { Toaster } from "@/components/ui/toaster";
 
 import { Navbar } from "@/components/shared/navbar/Navbar";
-import { Footer } from  "@/components/shared/footer/Footer";
 import { Providers } from "./providers/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Zeru",
+  title: "Derent",
   description: "Blockchain ",
 };
 
@@ -33,8 +32,6 @@ export default function RootLayout({ children }) {
         <Providers>
           <Navbar />
           {children}
-          {/* <Toaster /> */}
-        {/* <Footer /> */}
         </Providers>
       </body>
     </html>

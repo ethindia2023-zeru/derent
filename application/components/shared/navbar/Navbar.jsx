@@ -1,55 +1,101 @@
-"use client"
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useAccount } from 'wagmi';
-import { useRouter } from 'next/navigation';
-const DropDown=()=>{
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useProvider } from "wagmi";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useConnectModal, useAccountModal, useChainModal } from "@rainbow-me/rainbowkit";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { loadPropertyListing, setInitialPropertyListingsLoaded } from "@/store/slices/homeSlice";
+
+const DropDown = () => {
   // for routing
-  const router=useRouter();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const pro = useProvider();
+
+  useEffect(() => {
+    dispatch(loadPropertyListing({ pro }));
+    dispatch(setInitialPropertyListingsLoaded({ initialPropertyListingsLoaded: true }));
+    console.log("dispatched initial load");
+  }, []);
   // for selection from drop down
-  const handleSelectChange = (e) => {
-    const selectedOption = e.target.value;
+  const handleSelectChange = selectedOption => {
     switch (selectedOption) {
-      case 'MyHouses':
-        router.push('/my-houses');
+      case "MyHouses":
+        router.push("/my-houses");
         break;
-      case 'MyRentals':
-        router.push('/my-rentals')
-        break;
-      case 'Disconnect':
+      case "MyRentals":
+        router.push("/my-rentals");
         break;
       default:
         break;
     }
   };
-  return  <div className="relative inline-block">
-  <select
-    id="profileDropdown"
-    className=" py-2 px-4 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-    onChange={handleSelectChange}
-  >
-    <option selected disabled>My Profile</option>
-    <option value="MyHouses">My Houses</option>
-    <option value="MyRentals">My Rentals</option>
-    <option value="Disconnect">Disconnect</option>
-  </select>
-</div>
-}
-export const Navbar = () => {
-  const { address, isConnected } = useAccount()
-  return (
-    <div className=' mx-5 flex justify-between my-auto h-full mb-5'>
-    <Link href="/">Logo</Link>
-        <div className='flex gap-5 my-auto h-full'>
-        <Link href="/post-for-rent">
-          <button className='py-2 px-2 bg-blue-500 rounded-[5px] text-white hover:bg-blue-600 transition-opacity duration-300'>Post for rent</button>
-        </Link>
-        {
-          isConnected?<ConnectButton/>:<DropDown/>
-        }
-        </div>
-    </div>
-  )
-}
 
+  return (
+    <div className="relative inline-block">
+      <div className="rounded-md focus:outline-none focus:ring focus:border-blue-300">
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button className="py-2 px-2 rounded-[5px] text-white transition-opacity duration-300">My Profile</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleSelectChange("MyHouses")}>
+              <DropdownMenuLabel>My Houses</DropdownMenuLabel>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleSelectChange("MyRentals")}>
+              <DropdownMenuLabel>My Rentals</DropdownMenuLabel>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+};
+export const Navbar = () => {
+  const { openConnectModal } = useConnectModal();
+
+  const { address, isConnected } = useAccount();
+  return (
+    <div className="px-5 flex justify-between my-auto h-full pt-2 pb-6">
+      <Link href="/">
+        <Image width={85} height={85} alt="logoderent" src={"/logoderent.png"}></Image>
+      </Link>
+      <div className="flex gap-5 my-auto h-full">
+        {isConnected && (
+          <div className="space-x-4">
+            {" "}
+            <Link href="/post-for-rent">
+              <Button className="py-2 px-2 rounded-[5px] text-white transition-opacity duration-300">
+                Post for rent
+              </Button>
+            </Link>
+            <DropDown />
+          </div>
+        )}
+        {!isConnected && (
+          <Button
+            className="py-2 px-2 rounded-[5px] text-white transition-opacity duration-300"
+            onClick={openConnectModal}
+          >
+            Post for rent
+          </Button>
+        )}
+        <ConnectButton className="text-white" chainStatus="icon" />
+      </div>
+    </div>
+  );
+};
