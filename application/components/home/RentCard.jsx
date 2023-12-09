@@ -12,16 +12,18 @@ export const RentCard = ({image,key,price,bhk,city,state}) => {
         width={300}
         height={300}
     />
-    <div className="flex justify-between mb-2 mx-3">
+    <div className="flex justify-between mb-2">
+        <div>
+            Title
+        </div>
         <div>
             {price}
         </div>
-        <div>
-            {bhk}bhk
-        </div>
     </div>
-    <Image className=" mx-3 inline-block"  src={location} alt={key} width={20}/>
-    {city}, {state}
+    <div className=" text-left flex items-center">
+    <Image   src={location} alt={key} width={16}/>
+    {city}
+    </div>
     </div>
   )
 }

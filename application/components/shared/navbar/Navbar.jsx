@@ -34,7 +34,7 @@ const DropDown = () => {
   const handleSelectChange = selectedOption => {
     switch (selectedOption) {
       case "MyHouses":
-        router.push("/my-houses");
+        router.push("/my-house");
         break;
       case "MyRentals":
         router.push("/my-rentals");
@@ -53,7 +53,7 @@ const DropDown = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleSelectChange("MyHouses")}>
-              <DropdownMenuLabel>My Houses</DropdownMenuLabel>
+              <DropdownMenuLabel>My House</DropdownMenuLabel>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => handleSelectChange("MyRentals")}>

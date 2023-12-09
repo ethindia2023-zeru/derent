@@ -19,19 +19,9 @@ export const SideBarRentals = () => {
             link:"/my-rentals"
         },
         {
-            label:"Initial Lisitng",
-            image:location,
-            link:"/my-rentals/initial-listing"
-        },
-        {
-             label:"Dues",
+             label:"Manage",
              image:location,
              link:"/my-rentals/dues"
-         },
-         {
-             label:"Paid",
-             image:location,
-             link:"/my-rentals/paid"
          }
     ]
 
