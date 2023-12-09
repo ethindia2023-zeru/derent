@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IRental} from "../interfaces/IRental.sol";
 import {IPUSHCommInterface} from "../interfaces/IPUSHCommInterface.sol";
 import {Storage} from "./Storage.sol";
 
-contract Rental is IRental, Storage {
+contract Rental is Storage {
     address public EPNS_COMM_ADDRESS = 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
 
     //auction
@@ -59,7 +58,7 @@ contract Rental is IRental, Storage {
         uint256 waitingPeriodSecurityDeposit,
         bool isAuction,
         string memory location
-    ) external override {
+    ) external {
         Property memory property = Property(
             ++totalProperties,
             msg.sender,
@@ -99,7 +98,7 @@ contract Rental is IRental, Storage {
         );
         IPUSHCommInterface(EPNS_COMM_ADDRESS).sendNotification(
             0x15413cd3Bb0d8BCB88a70aE3679f68Dd7E5194Fb, // from channel
-            address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targeted put the address to which you want to send
+            0x15413cd3Bb0d8BCB88a70aE3679f68Dd7E5194Fb, // to recipient, put address(this) in case you want Broadcast or Subset. For Targeted put the address to which you want to send
             bytes(
                 string(
                     // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
@@ -120,7 +119,7 @@ contract Rental is IRental, Storage {
         ownerToPropertyIds[msg.sender].push(totalProperties);
     }
 
-    // function updateListingStatus(uint256 propertyId, bool listingStatus) external override {
+    // function updateListingStatus(uint256 propertyId, bool listingStatus) external   {
     //     Property storage property = propertyIdToProperty[propertyId];
     //     require(msg.sender == property.owner, "Only owner can update the listing status");
     //     property.propertyListingStatus = listingStatus;
@@ -134,7 +133,7 @@ contract Rental is IRental, Storage {
     //     emit updateListingStatusEvent(propertyId, property.owner, listingStatus);
     // }
 
-    function claimRent(uint256 propertyId) external override {
+    function claimRent(uint256 propertyId) external {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only owner can claim the rent");
         require(property.rentPaid == true, "Error: Rent not paid");
@@ -282,7 +281,7 @@ contract Rental is IRental, Storage {
         return properties;
     }
 
-    function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
+    function getListingByOwnerAddress(address _owner) external view returns (Property[] memory) {
         uint256[] memory propertyIds = ownerToPropertyIds[_owner];
         Property[] memory properties = new Property[](propertyIds.length);
         for (uint256 i = 0; i < propertyIds.length; i++) {
@@ -291,7 +290,7 @@ contract Rental is IRental, Storage {
         return properties;
     }
 
-    function getRentStatus(uint256 propertyId) external view override returns (bool) {
+    function getRentStatus(uint256 propertyId) external view returns (bool) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.rentPaid;
     }
