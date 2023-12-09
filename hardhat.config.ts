@@ -4,6 +4,8 @@ import "@nomicfoundation/hardhat-toolbox";
 
 import { config as dotenvConfig } from "dotenv";
 import { resolve } from "path";
+import { accounts } from './test-wallets.js';
+
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 const chainIds = {
@@ -42,9 +44,13 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
+      hardfork: 'london',
+      throwOnTransactionFailures: true,
+      throwOnCallFailures: true,
+      accounts: accounts.map(({ secretKey, balance }: { secretKey: string; balance: string }) => ({
+        privateKey: secretKey,
+        balance,
+      })),
       chainId: chainIds.hardhat,
     },
     mainnet: createTestnetConfig("mainnet"),
