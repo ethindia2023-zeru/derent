@@ -7,7 +7,9 @@ export const commonActionSetup = async signer => {
   const chainName = ChainIdsToNetwork(chainId);
 
   const rentalAddress = getContractAddress("Rental", chainName);
-  const rental_contract = RentalContract(signer, rentalAddress);
+  const signerOriginal = await signer.getSigner();
+  const rental_contract = RentalContract(signerOriginal, rentalAddress);
 
+  console.log(rentalAddress, rental_contract, chainId, chainName, "signerOriginal: ", signerOriginal);
   return rental_contract;
 };

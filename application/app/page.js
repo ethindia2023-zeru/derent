@@ -19,12 +19,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { paySecurityDeposit } from "@/actions/paySecurityDeposit";
 import { useSelector } from "react-redux";
+import { ethers } from "ethers";
+import { GetTransactionProvider } from "@/helpers/wallet/GetTransactionProvider";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [bid, setBid] = useState("");
 
   const propertyListing = useSelector(state => state.home.propertyListing);
+  const auctionStarted = useSelector(state => state.home.auctionStarted);
+
+  const signer = GetTransactionProvider();
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setSearchTerm(value);
@@ -36,10 +42,10 @@ export default function Home() {
     console.log("searching for", searchTerm);
   };
 
-  const handlePayInitialDeposit = propertyId => {
-    const success = paySecurityDeposit(propertyId);
+  const handlePayInitialDeposit = async (propertyId, securityDeposit) => {
+    const success = await paySecurityDeposit(signer?.provider, propertyId, securityDeposit);
     if (success) {
-      console.log("success");
+      console.log("success", success);
     } else {
       console.log("failed");
     }
@@ -81,92 +87,148 @@ export default function Home() {
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {propertyListing
-              .filter(link => {
-                if (link.isAuction) return false;
-              })
-              .map((house, index) => (
-                <Dialog key={index}>
-                  <DialogTrigger>
-                    <RentCard key={index} {...house} />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Rent House</DialogTitle>
-                      <DialogDescription>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>{house.propertyName}</CardTitle>
-                            <CardDescription>Pay the initial deposit and book your house</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="flex justify-between mb-10">
-                              <div className="flex flex-col">
-                                Rent: <span>₹{house.rent}</span>
+            {propertyListing &&
+              Object.values(propertyListing)
+                .filter(house => {
+                  if (house.propertyId == 0) return false;
+                  if (house.isAuction) return false;
+                  return true;
+                })
+                .map((house, index) => (
+                  <Dialog key={index}>
+                    <DialogTrigger>
+                      <RentCard
+                        key={index}
+                        image={"/newHouse.jpg"}
+                        price={house.rent}
+                        address={house.propertyLocation}
+                        title={house.propertyName}
+                      />{" "}
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Rent House</DialogTitle>
+                        <DialogDescription>
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>{house.propertyName}</CardTitle>
+                              <CardDescription>Pay the initial deposit and book your house</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex justify-between mb-10">
+                                <div className="flex flex-col">
+                                  Rent: <span>{house.rent && ethers.utils.formatEther(house.rent.toString())} ETH</span>
+                                </div>
+                                <div className="flex flex-col">
+                                  Advance:{" "}
+                                  <span>{house.advance && ethers.utils.formatEther(house.advance.toString())} ETH</span>
+                                </div>
+                                <div className="flex flex-col">
+                                  Initial Deposit:{" "}
+                                  <span>
+                                    {house.securityDeposit &&
+                                      ethers.utils.formatEther(house.securityDeposit.toString())}{" "}
+                                    ETH
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex flex-col">
-                                Advance: <span>₹{house.advance}</span>
-                              </div>
-                              <div className="flex flex-col">
-                                Initial Deposit: <span>₹{house.securityDeposit}</span>
-                              </div>
-                            </div>
-                            <Button
-                              className="mx-auto w-fit flex justify-center"
-                              onClick={() => handlePayInitialDeposit(house.propertyId)}
-                            >
-                              Pay
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              ))}
+                              <Button
+                                className="mx-auto w-fit flex justify-center"
+                                onClick={() => handlePayInitialDeposit(house.propertyId, house.securityDeposit)}
+                              >
+                                Pay
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                ))}
           </div>
         </TabsContent>
         <TabsContent value="auction">
           <div className=" mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {propertyListing
-              .filter(link => {
-                if (!link.isAuction) return false;
-              })
-              .map((house, index) => (
-                <Dialog key={index}>
-                  <DialogTrigger>
-                    <RentCard key={index} image={"/newHouse.jpg"} price={house.rent} address={house.propertyLocation} />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Auction </DialogTitle>
-                      <DialogDescription>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>{house.propertyName}</CardTitle>
-                            <CardDescription>Please place your bid here</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="flex justify-between mb-10">
-                              <div className="flex flex-col">
-                                MinBid: <span>500 ETH</span>
-                              </div>
-                              <Input
-                                value={bid}
-                                className="w-[50%]"
-                                type="number"
-                                placeholder="Place Your Bid"
-                                onChange={handleBidInput}
-                              />{" "}
-                            </div>
-                            <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
-                          </CardContent>
-                        </Card>
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              ))}
+            {propertyListing &&
+              Object.values(propertyListing)
+                .filter(house => {
+                  if (!house.isAuction) return false;
+                  return true;
+                })
+                .map((house, index) => (
+                  <Dialog key={index}>
+                    <DialogTrigger>
+                      <RentCard
+                        key={index}
+                        image={"/newHouse.jpg"}
+                        price={house.rent}
+                        address={house.propertyLocation}
+                        title={house.propertyName}
+                      />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          <div className="flex items-center">
+                            Auction{" "}
+                            {auctionStarted ? (
+                              <div className="text-[green] pl-2">(Running)</div>
+                            ) : (
+                              <div className="text-[red] pl-2">(Closed)</div>
+                            )}
+                          </div>
+                        </DialogTitle>
+                        <DialogDescription>
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>{house.propertyName}</CardTitle>
+                              {auctionStarted ? (
+                                <CardDescription>Please place your bid here</CardDescription>
+                              ) : (
+                                <CardDescription>Please come back after 5</CardDescription>
+                              )}
+                            </CardHeader>
+                            {auctionStarted && (
+                              <CardContent>
+                                <div className="flex flex-col items-center justify-between mb-10">
+                                  <div className="flex items-center justify-between space-x-[120px] pb-6">
+                                    <div className="flex flex-col">
+                                      Advance:{" "}
+                                      <span>
+                                        {house.advance && ethers.utils.formatEther(house.advance.toString())} ETH
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                      Initial Deposit:{" "}
+                                      <span>
+                                        {house.securityDeposit &&
+                                          ethers.utils.formatEther(house.securityDeposit.toString())}{" "}
+                                        ETH
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
+                                      Min. Rent Bid: <span>1 ETH</span>
+                                    </div>
+                                    <Input
+                                      value={bid}
+                                      className="w-[50%]"
+                                      type="number"
+                                      placeholder="Place Your Bid for Rent"
+                                      onChange={handleBidInput}
+                                    />{" "}
+                                  </div>
+                                </div>
+                                <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
+                              </CardContent>
+                            )}
+                          </Card>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                ))}
           </div>
         </TabsContent>
       </Tabs>

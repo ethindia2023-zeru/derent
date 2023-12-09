@@ -3,8 +3,7 @@ import { RentalContract } from "@/helpers/contractFactory/contractFactory";
 import { ChainIdsToNetwork } from "@/helpers/network/ChainIds";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", async props => {
-  const { pro } = props;
+const commonSetupForContract = async pro => {
   const { chainId } = await pro.getNetwork();
   const chainName = ChainIdsToNetwork(chainId);
 
@@ -13,13 +12,19 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   const rental_contract = RentalContract(pro, rentalAddress);
 
   console.log("Niceeee:", chainId, chainName, rentalAddress);
+  return rental_contract;
+};
+
+export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", async props => {
+  const { pro } = props;
+  const rental_contract = await commonSetupForContract(pro);
 
   try {
-    const propertyListing = await rental_contract.getAllPropertyListings();
+    const propertyListingOriginal = await rental_contract.getAllPropertyListings();
     const propertyListingsTemp = [];
 
-    for (let i = 0; i < propertyListing.length; i++) {
-      const propertyListing = propertyListing[i];
+    for (let i = 0; i < propertyListingOriginal.length; i++) {
+      const propertyListing = propertyListingOriginal[i];
       propertyListingsTemp.push({
         propertyName: propertyListing.propertyName,
         advance: parseFloat(propertyListing.advance.toString()),
@@ -57,8 +62,28 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   };
 });
 
+export const loadAuctionStarted = createAsyncThunk("home/loadAuctionStarted", async props => {
+  const { pro } = props;
+  const rental_contract = await commonSetupForContract(pro);
+
+  try {
+    const auctionStarted = await rental_contract.getIsAuction();
+    console.log("auctionStarted: ", auctionStarted);
+
+    return {
+      auctionStarted: auctionStarted,
+    };
+  } catch (err) {
+    console.log(err);
+  }
+  return {
+    auctionStarted: "",
+  };
+});
+
 const initialState = {
   propertyListing: null,
+  auctionStarted: false,
   initialPropertyListingsLoaded: false,
 };
 
@@ -77,6 +102,15 @@ export const homeSlice = createSlice({
         state.propertyListing = action.payload.propertyListing;
       })
       .addCase(loadPropertyListing.rejected, (state, { error }) => {
+        console.log(error);
+      })
+      /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      .addCase(loadAuctionStarted.pending, state => {})
+      .addCase(loadAuctionStarted.fulfilled, (state, action) => {
+        state.auctionStarted = action.payload.auctionStarted;
+      })
+      .addCase(loadAuctionStarted.rejected, (state, { error }) => {
         console.log(error);
       });
     /////////////////////////////////////////////////////////////////////////////////////////////////
