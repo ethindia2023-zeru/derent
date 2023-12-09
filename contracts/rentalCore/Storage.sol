@@ -28,7 +28,6 @@ contract Storage {
     //Auction
     bool auctionStarted;
 
-    
     uint256 totalProperties;
     mapping(uint256 => Property) propertyIdToProperty;
     mapping(address => uint256[]) ownerToPropertyIds;
@@ -36,5 +35,4 @@ contract Storage {
     mapping(address => uint256) tenantsAdvance;
     mapping(address => uint256) tenantsSecurityDeposit;
     mapping(address => uint256) tenantsRent;
-
 }
