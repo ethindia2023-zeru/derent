@@ -21,6 +21,7 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
     for (let i = 0; i < propertyListing.length; i++) {
       const propertyListing = propertyListing[i];
       propertyListingsTemp.push({
+        propertyName: propertyListing.propertyName,
         advance: parseFloat(propertyListing.advance.toString()),
         bid: parseFloat(propertyListing.bid.toString()),
         highestBidderTenant: propertyListing.highestBidderTenant,

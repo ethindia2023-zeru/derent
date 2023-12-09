@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [bid, setBid] = useState("");
 
   const propertyListing = useSelector(state => state.home.propertyListing);
   const handleInputChange = e => {
@@ -42,6 +43,13 @@ export default function Home() {
     } else {
       console.log("failed");
     }
+  };
+
+  const handleBidInput = e => {
+    const { value } = e.target;
+    const newBid = parseFloat(value);
+    console.log("newBid: ", newBid);
+    setBid(newBid);
   };
 
   return (
@@ -73,78 +81,92 @@ export default function Home() {
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {propertyListing.map((house, index) => (
-              <Dialog key={index}>
-                <DialogTrigger>
-                  <RentCard key={house.key} {...house} />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Rent House</DialogTitle>
-                    <DialogDescription>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>house.title</CardTitle>
-                          <CardDescription>Pay the initial deposit and book your house</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between mb-10">
-                            <div className="flex flex-col">
-                              Rent: <span>₹{house.price}</span>
+            {propertyListing
+              .filter(link => {
+                if (link.isAuction) return false;
+              })
+              .map((house, index) => (
+                <Dialog key={index}>
+                  <DialogTrigger>
+                    <RentCard key={index} {...house} />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Rent House</DialogTitle>
+                      <DialogDescription>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>{house.propertyName}</CardTitle>
+                            <CardDescription>Pay the initial deposit and book your house</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex justify-between mb-10">
+                              <div className="flex flex-col">
+                                Rent: <span>₹{house.rent}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                Advance: <span>₹{house.advance}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                Initial Deposit: <span>₹{house.securityDeposit}</span>
+                              </div>
                             </div>
-                            <div className="flex flex-col">
-                              Advance: <span>₹house.advance</span>
-                            </div>
-                            <div className="flex flex-col">
-                              Initial Deposit: <span>₹{house.initialdeposit}</span>
-                            </div>
-                          </div>
-                          <Button
-                            className="mx-auto w-fit flex justify-center"
-                            onClick={() => handlePayInitialDeposit(pro)}
-                          >
-                            Submit
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            ))}
+                            <Button
+                              className="mx-auto w-fit flex justify-center"
+                              onClick={() => handlePayInitialDeposit(house.propertyId)}
+                            >
+                              Pay
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              ))}
           </div>
         </TabsContent>
         <TabsContent value="auction">
           <div className=" mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {propertyListing.map((house, index) => (
-              <Dialog key={index}>
-                <DialogTrigger>
-                  <RentCard key={index} {...house} />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Auction </DialogTitle>
-                    <DialogDescription>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>house.title</CardTitle>
-                          <CardDescription>Please place your bid here</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between mb-10">
-                            <div className="flex flex-col">
-                              MinBid: <span>₹{house.minBid}</span>
+            {propertyListing
+              .filter(link => {
+                if (!link.isAuction) return false;
+              })
+              .map((house, index) => (
+                <Dialog key={index}>
+                  <DialogTrigger>
+                    <RentCard key={index} image={"/newHouse.jpg"} price={house.rent} address={house.propertyLocation} />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Auction </DialogTitle>
+                      <DialogDescription>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>{house.propertyName}</CardTitle>
+                            <CardDescription>Please place your bid here</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex justify-between mb-10">
+                              <div className="flex flex-col">
+                                MinBid: <span>500 ETH</span>
+                              </div>
+                              <Input
+                                value={bid}
+                                className="w-[50%]"
+                                type="number"
+                                placeholder="Place Your Bid"
+                                onChange={handleBidInput}
+                              />{" "}
                             </div>
-                            <Input className=" w-[50%]" type="number" placeholder="Place Your Bid" />{" "}
-                          </div>
-                          <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
-                        </CardContent>
-                      </Card>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            ))}
+                            <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
+                          </CardContent>
+                        </Card>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              ))}
           </div>
         </TabsContent>
       </Tabs>
