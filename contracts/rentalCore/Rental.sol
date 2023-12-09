@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import { IRental } from "../interfaces/IRental.sol";
-import { Storage } from "./Storage.sol";
+
+import {IRental} from "../interfaces/IRental.sol";
+import {Storage} from "./Storage.sol";
 
 contract Rental is IRental, Storage {
+    address public EPNS_COMM_ADDRESS = 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
+
     //auction
     function startAuction() external {
         auctionStarted = !auctionStarted;
@@ -173,6 +176,27 @@ contract Rental is IRental, Storage {
         require(property.rent <= msg.value, "Insufficient rent amount");
         property.rentPaid = true;
         tenantsRent[msg.sender] = msg.value;
+        IPUSHCommInterface(EPNS_COMM_ADDRESS).sendNotification(
+            0x15413cd3Bb0d8BCB88a70aE3679f68Dd7E5194Fb, // from channel
+            to, // to recipient, put address(this) in case you want Broadcast or Subset. For Targeted put the address to which you want to send
+            bytes(
+                string(
+                    // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                    abi.encodePacked(
+                        "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                        "+", // segregator
+                        "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targeted or subset)
+                        "+", // segregator
+                        "Rent Paid", // this is notification title
+                        "+", // segregator
+                        "Hooray! ", // notification body
+                        addressToString(msg.sender), // notification body
+                        " sent ", // notification body
+                        " the Rent!" // notification body
+                    )
+                )
+            )
+        );
     }
 
     function confirmOccupation(uint256 propertyId) external payable {
