@@ -15,12 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Button } from "@/components/ui/button";
 import { paySecurityDeposit } from "@/actions/paySecurityDeposit";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { GetTransactionProvider } from "@/helpers/wallet/GetTransactionProvider";
+
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,10 +80,10 @@ export default function Home() {
         />
       </div>
       {/* tab section */}
-      <Tabs defaultValue="rent">
+      <Tabs defaultValue="rent" className=" bg-transparent">
         <TabsList className="flex justify-center w-auto">
-          <TabsTrigger value="rent">Rent</TabsTrigger>
-          <TabsTrigger value="auction">Auction</TabsTrigger>
+          <TabsTrigger className="w-[30%]" value="rent">Rent</TabsTrigger>
+          <TabsTrigger className="w-[30%]" value="auction">Auction</TabsTrigger>
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
