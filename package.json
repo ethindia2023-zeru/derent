@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
+    "@types/lowdb": "^1.0.15",
     "bignumber.js": "^9.1.2",
     "dotenv": "^16.3.1",
     "mocha-chai-jest-snapshot": "^1.1.4",

@@ -272,12 +272,12 @@ contract Rental is IRental, Storage {
         return (rentPaid, rentNotPaid);
     }
 
-    function getDueDate(uint256 propertyId) external returns (uint256) {
+    function getDueDate(uint256 propertyId) external view returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.rentPaidTimestamp + 30 days;
     }
 
-    function getAdvanceDueDate(uint256 propertyId) external returns (uint256) {
+    function getAdvanceDueDate(uint256 propertyId) external view returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.securityDepositTimestamp + 15 days;
     }

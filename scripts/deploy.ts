@@ -4,6 +4,7 @@
 // Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
 import { Contract, ContractFactory } from "ethers";
+import { registerContractInJsonDb } from "../helpers/contract-helpers";
 
 async function main(): Promise<void> {
   const mnemonic: string = process.env.MNEMONIC || "";
@@ -16,11 +17,12 @@ async function main(): Promise<void> {
   const deployer = ethers.Wallet.fromMnemonic(mnemonic);
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("Balance:", balance);
-  const testToken: Contract = await TestTokenFactory.deploy();
-  await testToken.deployed();
+  const rentalContract: Contract = await TestTokenFactory.deploy();
+  await rentalContract.deployed();
+  //await registerContractInJsonDb(rentalContract.toUpperCase(), rentalContract);
   const balance1 = await ethers.provider.getBalance(deployer.address);
   console.log("Balance After:", balance1);
-  console.log("Rental deployed to: ", testToken.address);
+  console.log("Rental deployed to: ", rentalContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

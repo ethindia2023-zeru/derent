@@ -6,13 +6,13 @@ export interface SymbolMap<T> {
 }
 
 export enum eNetworks {
-  arbitrum_goerli = "arbitrum",
-  scroll_testnet = "scroll",
+  arbitrum_goerli = "arbitrum_goerli",
+  scroll_testnet = "scroll_testnet",
   hardhat = "hardhat",
-  mantle_testnet = "mantle",
-  base_testnet = "base",
-  zetachain_testnet = "zetachain",
-  x1_testnet = "x1",
+  mantle_testnet = "mantle_testnet",
+  base_testnet = "base_testnet",
+  zetachain_testnet = "zetachain_testnet",
+  x1_testnet = "x1_testnet",
 }
 
 export type eNetwork =
