@@ -24,7 +24,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { loadPropertyListing } from "@/store/slices/homeSlice";
 import { bidOnProperty } from "@/actions/bidOnProperty";
 
-
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [bid, setBid] = useState("");
@@ -128,8 +127,12 @@ export default function Home() {
       {/* tab section */}
       <Tabs defaultValue="rent" className=" bg-transparent">
         <TabsList className="flex justify-center w-auto">
-          <TabsTrigger className="w-[30%]" value="rent">Rent</TabsTrigger>
-          <TabsTrigger className="w-[30%]" value="auction">Auction</TabsTrigger>
+          <TabsTrigger className="w-[30%]" value="rent">
+            Rent
+          </TabsTrigger>
+          <TabsTrigger className="w-[30%]" value="auction">
+            Auction
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
@@ -164,17 +167,28 @@ export default function Home() {
                             <CardContent>
                               <div className="flex justify-between mb-10">
                                 <div className="flex flex-col">
-                                  Rent: <span>{house.rent && ethers.utils.formatEther(house.rent.toString())} ETH</span>
+                                  Rent:{" "}
+                                  <span>
+                                    {house.rent &&
+                                      parseFloat(ethers.utils.formatEther(house.rent.toString())).toFixed(2)}{" "}
+                                    ETH
+                                  </span>
                                 </div>
                                 <div className="flex flex-col">
                                   Advance:{" "}
-                                  <span>{house.advance && ethers.utils.formatEther(house.advance.toString())} ETH</span>
+                                  <span>
+                                    {house.advance &&
+                                      parseFloat(ethers.utils.formatEther(house.advance.toString())).toFixed(2)}{" "}
+                                    ETH
+                                  </span>
                                 </div>
                                 <div className="flex flex-col">
                                   Initial Deposit:{" "}
                                   <span>
                                     {house.securityDeposit &&
-                                      ethers.utils.formatEther(house.securityDeposit.toString())}{" "}
+                                      parseFloat(ethers.utils.formatEther(house.securityDeposit.toString())).toFixed(
+                                        2,
+                                      )}{" "}
                                     ETH
                                   </span>
                                 </div>
