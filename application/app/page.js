@@ -17,10 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
+import { paySecurityDeposit } from "@/actions/paySecurityDeposit";
+import { useSelector } from "react-redux";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const propertyListing = useSelector(state => state.home.propertyListing);
   const handleInputChange = e => {
     const { name, value } = e.target;
     setSearchTerm(value);
@@ -31,6 +34,16 @@ export default function Home() {
     // logic for searching a home for rent
     console.log("searching for", searchTerm);
   };
+
+  const handlePayInitialDeposit = propertyId => {
+    const success = paySecurityDeposit(propertyId);
+    if (success) {
+      console.log("success");
+    } else {
+      console.log("failed");
+    }
+  };
+
   return (
     <div className="w-full">
       {/* search bar */}
@@ -60,8 +73,8 @@ export default function Home() {
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {houseData.map(house => (
-              <Dialog>
+            {propertyListing.map((house, index) => (
+              <Dialog key={index}>
                 <DialogTrigger>
                   <RentCard key={house.key} {...house} />
                 </DialogTrigger>
@@ -86,7 +99,12 @@ export default function Home() {
                               Initial Deposit: <span>₹{house.initialdeposit}</span>
                             </div>
                           </div>
-                          <Button className=" mx-auto w-fit flex justify-center">Submit</Button>
+                          <Button
+                            className="mx-auto w-fit flex justify-center"
+                            onClick={() => handlePayInitialDeposit(pro)}
+                          >
+                            Submit
+                          </Button>
                         </CardContent>
                       </Card>
                     </DialogDescription>
@@ -98,10 +116,10 @@ export default function Home() {
         </TabsContent>
         <TabsContent value="auction">
           <div className=" mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {auctionData.map(house => (
-              <Dialog>
+            {propertyListing.map((house, index) => (
+              <Dialog key={index}>
                 <DialogTrigger>
-                  <RentCard key={house.key} {...house} />
+                  <RentCard key={index} {...house} />
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>

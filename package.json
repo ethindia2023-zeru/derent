@@ -8,11 +8,11 @@
     "test": "npx hardhat test",
     "test:gas": "UPDATE_SNAPSHOT=1 yarn test --grep gas",
     "clean": "rm -rf ./artifacts ./cache ./typechain ",
-    "deploy": "npx hardhat run --network hardhat scripts/deploy.ts",
+    "deploy": "npx hardhat run --network coverage scripts/deploy.ts",
     "deploy-arbitrumGoerli": "npx hardhat run --network arbitrumGoerli scripts/deploy.ts",
-    "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts",
+    "tasks": "npx hardhat run --network coverage scripts/tasks/rental.ts",
     "node": "npx hardhat node",
-    "deployTask": "hardhat --network hardhat deploy"
+    "deployTask": "hardhat --network coverage deploy"
   },
   "author": "amanusk",
   "license": "MIT",
