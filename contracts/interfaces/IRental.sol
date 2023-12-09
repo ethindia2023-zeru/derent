@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import {Storage} from "../rentalCore/Storage.sol";
-
 import { Storage } from "../rentalCore/Storage.sol";
 
 interface IRental {
@@ -19,14 +17,15 @@ interface IRental {
         uint256 initialDeposit,
         uint256 rent,
         uint256 waitingPeriodSecurityDeposit,
+        bool isAuction,
         string memory location
     ) external;
 
-    function updateListingStatus(uint256 propertyId, bool listingStatus) external;
+    // function updateListingStatus(uint256 propertyId, bool listingStatus) external;
 
     function claimSecurityDeposit(uint256 propertyId) external;
 
-        function claimRent (uint256 propertyId) external;
+    function claimRent(uint256 propertyId) external;
 
     function getListingByOwnerAddress(address _owner) external view returns (Storage.Property[] memory);
 
