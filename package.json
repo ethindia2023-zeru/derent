@@ -11,7 +11,8 @@
     "deploy": "npx hardhat run --network hardhat scripts/deploy.ts",
     "deploy-arbitrumGoerli": "npx hardhat run --network arbitrumGoerli scripts/deploy.ts",
     "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts",
-    "node": "npx hardhat node"
+    "node": "npx hardhat node",
+    "deployTask": "hardhat --network hardhat deploy"
   },
   "author": "amanusk",
   "license": "MIT",
@@ -42,6 +43,7 @@
     "@openzeppelin/contracts": "^4.7.3",
     "bignumber.js": "^9.1.2",
     "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
     "mocha-chai-jest-snapshot": "^1.1.4",
     "prettier": "^3.1.0"
   }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { search, filter } from "@/assets";
 import { houseData, auctionData } from "@/data";
 import { RentCard } from "@/components/home/RentCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -12,16 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
 
@@ -61,29 +54,37 @@ export default function Home() {
       </div>
       {/* tab section */}
       <Tabs defaultValue="rent">
-        <TabsList className="mx-auto flex justify-center">
+        <TabsList className="flex justify-center w-auto">
           <TabsTrigger value="rent">Rent</TabsTrigger>
           <TabsTrigger value="auction">Auction</TabsTrigger>
         </TabsList>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-            {houseData.map((house) => (
+            {houseData.map(house => (
               <Dialog>
-                <DialogTrigger><RentCard key={house.key} {...house} /></DialogTrigger>
+                <DialogTrigger>
+                  <RentCard key={house.key} {...house} />
+                </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Rent House</DialogTitle>
                     <DialogDescription>
-                    <Card>
-                      <CardHeader>
+                      <Card>
+                        <CardHeader>
                           <CardTitle>house.title</CardTitle>
                           <CardDescription>Pay the initial deposit and book your house</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex justify-between mb-10">
-                            <div className="flex flex-col">Rent: <span>₹{house.price}</span></div>
-                            <div className="flex flex-col">Advance: <span>₹house.advance</span></div>
-                            <div className="flex flex-col">Initial Deposit: <span>₹{house.initialdeposit}</span></div>
+                            <div className="flex flex-col">
+                              Rent: <span>₹{house.price}</span>
+                            </div>
+                            <div className="flex flex-col">
+                              Advance: <span>₹house.advance</span>
+                            </div>
+                            <div className="flex flex-col">
+                              Initial Deposit: <span>₹{house.initialdeposit}</span>
+                            </div>
                           </div>
                           <Button className=" mx-auto w-fit flex justify-center">Submit</Button>
                         </CardContent>
@@ -96,23 +97,28 @@ export default function Home() {
           </div>
         </TabsContent>
         <TabsContent value="auction">
-        <div className=" mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
-          {auctionData.map(house => (
-            <Dialog>
-                <DialogTrigger><RentCard key={house.key} {...house} /></DialogTrigger>
+          <div className=" mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
+            {auctionData.map(house => (
+              <Dialog>
+                <DialogTrigger>
+                  <RentCard key={house.key} {...house} />
+                </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Auction  </DialogTitle>
+                    <DialogTitle>Auction </DialogTitle>
                     <DialogDescription>
-                    <Card>
-                      <CardHeader>
+                      <Card>
+                        <CardHeader>
                           <CardTitle>house.title</CardTitle>
                           <CardDescription>Please place your bid here</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex justify-between mb-10">
-                            <div className="flex flex-col">MinBid: <span>₹{house.minBid}</span></div>
-                            <Input className=" w-[50%]" type="number" placeholder="Place Your Bid" />                          </div>
+                            <div className="flex flex-col">
+                              MinBid: <span>₹{house.minBid}</span>
+                            </div>
+                            <Input className=" w-[50%]" type="number" placeholder="Place Your Bid" />{" "}
+                          </div>
                           <Button className=" mx-auto w-fit flex justify-center">Place Bid</Button>
                         </CardContent>
                       </Card>
@@ -120,8 +126,8 @@ export default function Home() {
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
-          ))}
-        </div>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

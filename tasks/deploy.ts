@@ -1,13 +1,14 @@
+import { task } from "hardhat/config";
 import { ethers } from "hardhat";
 import { Contract, ContractFactory, Signer } from "ethers";
 import { Rental__factory } from "../typechain";
 import fs from "fs";
-import { ChainIdsToNetwork } from "./ChainIds";
-async function main(): Promise<void> {
+
+task("deploy", "Deploy lending pool for dev enviroment").setAction(async ({}, localBRE) => {
+  await localBRE.run("set-DRE");
+
   const [deployer, owner, tenant]: Signer[] = await ethers.getSigners();
-  const chainId: number = await ethers.provider.getNetwork().then(network => network.chainId);
-  const chainName: string | undefined = ChainIdsToNetwork(chainId);
-  console.log("Chain ID: ", ChainIdsToNetwork(chainId));
+  const chainName: string = ethers.provider.network.name;
   console.log("Chain name: ", chainName);
   console.log("Deployer: ", await deployer.getAddress());
   const lendingPoolImpl: Contract = await new Rental__factory(deployer).deploy();
@@ -35,11 +36,4 @@ async function main(): Promise<void> {
 
   // Write the updated addresses back to the JSON file
   fs.writeFileSync("deployedAddresses.json", JSON.stringify(contractAddresses, null, 2));
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch((error: Error) => {
-    console.error(error);
-    process.exit(1);
-  });
+});

@@ -1,5 +1,4 @@
-import { RentalContract } from "@/helpers/contractFactory/contractFactory";
-import { ChainIdsToNetwork } from "@/helpers/network/ChainIds";
+import { commonActionSetup } from "./helper/commonHelper";
 
 export const addListing = async (
   signer,
@@ -11,12 +10,8 @@ export const addListing = async (
   location,
 ) => {
   try {
-    const { chainId } = await signer.getNetwork();
-    const chainName = ChainIdsToNetwork(chainId);
+    const rental_contract = commonActionSetup(signer);
 
-    console.log(chainId, chainName);
-
-    const rental_contract = RentalContract(signer);
     const data = rental_contract.addListing(
       advance,
       securityDeposit,

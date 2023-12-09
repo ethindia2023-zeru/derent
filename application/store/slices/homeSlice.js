@@ -1,3 +1,4 @@
+import { getContractAddress } from "@/helpers/contractFactory/ContractAddresses";
 import { RentalContract } from "@/helpers/contractFactory/contractFactory";
 import { ChainIdsToNetwork } from "@/helpers/network/ChainIds";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
@@ -7,19 +8,20 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   const { chainId } = await pro.getNetwork();
   const chainName = ChainIdsToNetwork(chainId);
 
-  console.log(chainId, chainName);
+  const rentalAddress = getContractAddress("Rental", chainName);
+  const rental_contract = RentalContract(pro, rentalAddress);
 
-  const rental_contract = RentalContract(pro);
+  console.log(chainId, chainName, rentalAddress);
 
-  try {
-    const propertyListings = await rental_contract.getAllPropertyListings();
-    console.log(propertyListings);
-    return {
-      propertyListings,
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  // try {
+  const propertyListings = await rental_contract.getAllPropertyListings();
+  console.log(propertyListings);
+  return {
+    propertyListings,
+  };
+  // } catch (err) {
+  //   console.log(err);
+  // }
 });
 
 const initialState = {
