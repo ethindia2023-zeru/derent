@@ -1,11 +1,11 @@
 import { commonActionSetup } from "./helper/commonHelper";
 
-export const paySecurityDeposit = async (signer, propertyId, securityDeposit) => {
+export const bidOnProperty = async (signer, propertyId, newBid) => {
   try {
-    console.log("paySecurityDeposit: ", propertyId, "signer: ", signer, "securityDeposit: ", securityDeposit);
+    console.log("paySecurityDeposit: ", propertyId, "signer: ", signer, "newBid: ", newBid);
     const rental_contract = await commonActionSetup(signer);
 
-    const data = await rental_contract.paySecurityDeposit(propertyId, { value: securityDeposit?.toString() });
+    const data = await rental_contract.bidOnProperty(propertyId, newBid);
     console.log("data: ", data);
     const txResult = await data.wait();
     console.log("txResult: ", txResult);
