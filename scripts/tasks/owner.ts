@@ -139,10 +139,27 @@ export async function testOwnerFunctions(testToken: Contract) {
   bidder = await testToken.connect(deployer).getBidWinnerForProperty(4);
   console.log("winner of the bid", bidder);
 
-  //get all properties listing (from graphQL)
+  //get all properties listing
+  const allProperties = await testToken.getAllPropertyListings();
+  console.log("All properties are :",allProperties)
+
   // get listing by owneraddress
+  const allPropertiesByOwner = await testToken.getListingByOwnerAddress(owner.address);
+  console.log("AllPropertiesByOwner are :",allPropertiesByOwner)
+
   // get rent status
+  const rentStatus = await testToken.getRentStatus(1);
+  console.log("getRentStatus 1 :",rentStatus)
+
   // get rent status by owneraddress
+  const rentStatusByOwnerAddress = await testToken.connect(owner).getRentStatusByOwnerAddress(owner.address);
+  console.log("rentStatusByOwnerAddress  :",rentStatusByOwnerAddress)
+
   //get due date
+  const dueDate = await testToken.getDueDate(1);
+  console.log("dueDate  :",dueDate)
+
   // get advance due date
+  const dueDateAdvance = await testToken.getAdvanceDueDate(1);
+  console.log("dueDateAdvance  :",dueDateAdvance)
 }
