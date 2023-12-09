@@ -30,12 +30,29 @@ contract Rental is IRental, Storage {
         return auctionStarted;
     }
 
+    event listingAdded(
+        uint256 indexed propertyId,
+        address indexed owner,
+        address tenant,
+        uint256 advance,
+        uint256 securityDeposit,
+        uint256 rent,
+        uint256 waitingPeriodSecurityDeposit,
+        string propertyLocation,
+        uint256 rentPaidTimestamp,
+        uint256 securityDepositTimestamp,
+        bool isAuction,
+        uint256 bid,
+        address highestBidderTenant
+    );
+
     // owner functions
     function addListing(
         uint256 advance,
         uint256 securityDeposit,
         uint256 rent,
         uint256 waitingPeriodSecurityDeposit,
+        bool isAuction,
         string memory location
     ) external override {
         Property memory property = Property(
@@ -47,7 +64,7 @@ contract Rental is IRental, Storage {
             rent,
             waitingPeriodSecurityDeposit,
             location,
-            true,
+            false,
             false,
             false,
             false,
@@ -56,7 +73,22 @@ contract Rental is IRental, Storage {
             false,
             0,
             0,
-            false,
+            isAuction,
+            0,
+            address(0)
+        );
+        emit listingAdded(
+            totalProperties,
+            msg.sender,
+            address(0),
+            advance,
+            securityDeposit,
+            rent,
+            waitingPeriodSecurityDeposit,
+            location,
+            0,
+            0,
+            isAuction,
             0,
             address(0)
         );
@@ -64,18 +96,19 @@ contract Rental is IRental, Storage {
         ownerToPropertyIds[msg.sender].push(totalProperties);
     }
 
-    function updateListingStatus(uint256 propertyId, bool listingStatus) external override {
-        Property storage property = propertyIdToProperty[propertyId];
-        require(msg.sender == property.owner, "Only owner can update the listing status");
-        property.propertyListingStatus = listingStatus;
-        if (listingStatus) {
-            property.isReserved = false;
-            property.isConfirmedByOwner = false;
-            property.isConfirmedByTenant = false;
-            property.rentPaid = false;
-            property.tenant = address(0);
-        }
-    }
+    // function updateListingStatus(uint256 propertyId, bool listingStatus) external override {
+    //     Property storage property = propertyIdToProperty[propertyId];
+    //     require(msg.sender == property.owner, "Only owner can update the listing status");
+    //     property.propertyListingStatus = listingStatus;
+    //     if (listingStatus) {
+    //         property.isReserved = false;
+    //         property.isConfirmedByOwner = false;
+    //         property.isConfirmedByTenant = false;
+    //         property.rentPaid = false;
+    //         property.tenant = address(0);
+    //     }
+    //     emit updateListingStatusEvent(propertyId, property.owner, listingStatus);
+    // }
 
     function claimSecurityDeposit(uint256 propertyId) external override {
         Property memory property = propertyIdToProperty[propertyId];
@@ -117,6 +150,15 @@ contract Rental is IRental, Storage {
         require(sent, "Failed to send Ether");
     }
 
+    event securityDepositPaidEvent(
+        uint256 indexed propertyId,
+        address indexed owner,
+        address indexed tenant,
+        bool isReserved,
+        uint256 amount,
+        uint256 timeStamp
+    );
+
     // user functions
     function paySecurityDeposit(uint256 propertyId) external payable {
         Storage.Property storage property = propertyIdToProperty[propertyId];
@@ -128,6 +170,14 @@ contract Rental is IRental, Storage {
         property.isReserved = true;
         property.securityDepositTimestamp = block.timestamp;
         tenantsSecurityDeposit[msg.sender] = msg.value;
+        emit securityDepositPaidEvent(
+            propertyId,
+            property.owner,
+            property.tenant,
+            property.isReserved,
+            property.securityDeposit,
+            property.securityDepositTimestamp
+        );
     }
 
     function payRent(uint256 propertyId) external payable {
