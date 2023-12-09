@@ -26,6 +26,12 @@ const chainIds = {
   mainnet: 1,
   rinkeby: 4,
   ropsten: 3,
+  arbitrum_goerli: 421613,
+  scroll_testnet: 534353,
+  mantle_testnet: 5001,
+  base_testnet: 84531,
+  zetachain_testnet: 7001,
+  x1_testnet: 195,
 };
 
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
@@ -114,12 +120,12 @@ const config: HardhatUserConfig = {
       chainId: chainIds.hardhat,
       //forking: buildForkConfig(),
     },
-    arbitrumGoerli: getCommonNetworkConfig(eNetworks.arbitrum_goerli, 421613),
-    scroll_testnet: getCommonNetworkConfig(eNetworks.scroll_testnet, 534353),
-    mantle_testnet: getCommonNetworkConfig(eNetworks.mantle_testnet, 5001),
-    base_testnet: getCommonNetworkConfig(eNetworks.base_testnet, 84531),
-    zetachain_testnet: getCommonNetworkConfig(eNetworks.zetachain_testnet, 7001),
-    x1_testnet: getCommonNetworkConfig(eNetworks.x1_testnet, 195),
+    arbitrumGoerli: getCommonNetworkConfig(eNetworks.arbitrum_goerli, chainIds.arbitrum_goerli),
+    scroll_testnet: getCommonNetworkConfig(eNetworks.scroll_testnet, chainIds.scroll_testnet),
+    mantle_testnet: getCommonNetworkConfig(eNetworks.mantle_testnet, chainIds.mantle_testnet),
+    base_testnet: getCommonNetworkConfig(eNetworks.base_testnet, chainIds.base_testnet),
+    zetachain_testnet: getCommonNetworkConfig(eNetworks.zetachain_testnet, chainIds.zetachain_testnet),
+    x1_testnet: getCommonNetworkConfig(eNetworks.x1_testnet, chainIds.x1_testnet),
   },
   solidity: {
     compilers: [
