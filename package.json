@@ -9,11 +9,8 @@
     "test:gas": "UPDATE_SNAPSHOT=1 yarn test --grep gas",
     "clean": "rm -rf ./artifacts ./cache ./typechain ",
     "deploy": "npx hardhat run --network hardhat scripts/deploy.ts",
-<<<<<<< HEAD
-    "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts"
-=======
+    "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts",
     "node": "npx hardhat node"
->>>>>>> origin/elite
   },
   "author": "amanusk",
   "license": "MIT",
