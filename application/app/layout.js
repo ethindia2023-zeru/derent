@@ -4,8 +4,8 @@ import Head from "next/head"; // Import Head component for metadata
 import { Inter } from "next/font/google";
 // import { Toaster } from "@/components/ui/toaster";
 
-// import { Navbar } from "@/components/shared/navbar/Navbar";
-import { Footer } from "@/components/shared/footer/Footer";
+import { Navbar } from "@/components/shared/navbar/Navbar";
+import { Footer } from  "@/components/shared/footer/Footer";
 import { Providers } from "./providers/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,10 +31,10 @@ export default function RootLayout({ children }) {
       </Head>
       <body suppressHydrationWarning={true} className={inter.className}>
         <Providers>
-          {/* <Navbar /> */}
+          <Navbar />
           {children}
           {/* <Toaster /> */}
-          <Footer />
+        {/* <Footer /> */}
         </Providers>
       </body>
     </html>
