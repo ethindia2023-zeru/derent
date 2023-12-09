@@ -7,7 +7,10 @@
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
     "test:gas": "UPDATE_SNAPSHOT=1 yarn test --grep gas",
-    "clean": "rm -rf ./artifacts ./cache ./typechain "
+    "clean": "rm -rf ./artifacts ./cache ./typechain ",
+    "deploy": "npx hardhat run --network hardhat scripts/deploy.ts",
+    "tasks": "npx hardhat run --network hardhat scripts/tasks/rental.ts",
+    "node": "npx hardhat node"
   },
   "author": "amanusk",
   "license": "MIT",
@@ -27,7 +30,7 @@
     "@uniswap/snapshot-gas-cost": "^1.0.0",
     "chai": "^4.3.6",
     "ethers": "^5.7.1",
-    "hardhat": "^2.12.0",
+    "hardhat": "^2.19.2",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.2",
     "ts-node": "^10.9.1",
@@ -36,6 +39,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
-    "mocha-chai-jest-snapshot": "^1.1.4"
+    "dotenv": "^16.3.1",
+    "mocha-chai-jest-snapshot": "^1.1.4",
+    "prettier": "^3.1.0"
   }
 }
