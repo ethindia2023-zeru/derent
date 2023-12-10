@@ -1,32 +1,44 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-// When running the script with `hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
-import { Contract, ContractFactory } from "ethers";
-import { registerContractInJsonDb } from "../helpers/contract-helpers";
-
+import { Contract, ContractFactory, Signer } from "ethers";
+import { Rental__factory } from "../typechain";
+import fs from "fs";
+import { ChainIdsToNetwork } from "./ChainIds";
+import { testOwnerFunctions } from "./tasks/owner";
 async function main(): Promise<void> {
-  const mnemonic: string = process.env.MNEMONIC || "";
-  // Hardhat always runs the compile task when running scripts through it.
-  // If this runs in a standalone fashion you may want to call compile manually
-  // to make sure everything is compiled
-  // await run("compile");
-  // We get the contract to deploy
-  const TestTokenFactory: ContractFactory = await ethers.getContractFactory("Rental");
-  const deployer = ethers.Wallet.fromMnemonic(mnemonic);
-  const balance = await ethers.provider.getBalance(deployer.address);
-  console.log("Balance:", balance);
-  const rentalContract: Contract = await TestTokenFactory.deploy();
-  await rentalContract.deployed();
-  //await registerContractInJsonDb(rentalContract.toUpperCase(), rentalContract);
-  const balance1 = await ethers.provider.getBalance(deployer.address);
-  console.log("Balance After:", balance1);
+  const [deployer, owner, tenant]: Signer[] = await ethers.getSigners();
+  const chainId: number = await ethers.provider.getNetwork().then(network => network.chainId);
+  const chainName: string | undefined = ChainIdsToNetwork(chainId);
+  console.log("Chain ID: ", ChainIdsToNetwork(chainId));
+  console.log("Chain name: ", chainName);
+  console.log("Deployer: ", await deployer.getAddress());
+  const rentalContract: Contract = await new Rental__factory(deployer).deploy();
   console.log("Rental deployed to: ", rentalContract.address);
+
+  // Read the existing JSON file
+  let contractAddresses: any = {};
+  try {
+    contractAddresses = JSON.parse(fs.readFileSync("deployedAddresses.json", "utf8"));
+  } catch (err) {
+    console.error(`Error reading file from disk: ${err}`);
+  }
+
+  // Append the address to the respective chain
+  contractAddresses["Rental"] = contractAddresses["Rental"] || {};
+  contractAddresses["Rental"][chainName] = {
+    address: rentalContract.address,
+    deployer: await deployer.getAddress(),
+  };
+  await testOwnerFunctions(rentalContract);
+  // Add the address for the 'arbitrum' chain here
+  // contractAddresses["Rental"]["arbitrum"] = {
+  //   "address": rentalContract.address,
+  //   "deployer": await deployer.getAddress()
+  // };
+
+  // Write the updated addresses back to the JSON file
+  fs.writeFileSync("deployedAddresses.json", JSON.stringify(contractAddresses, null, 2));
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main()
   .then(() => process.exit(0))
   .catch((error: Error) => {
