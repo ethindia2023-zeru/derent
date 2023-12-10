@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import { IRental } from "../interfaces/IRental.sol";
-import { Storage } from "./Storage.sol";
 
-contract Rental is IRental, Storage {
+import {IPUSHCommInterface} from "../interfaces/IPUSHCommInterface.sol";
+import {Storage} from "./Storage.sol";
+
+contract Rental is Storage {
+    address public EPNS_COMM_ADDRESS = 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
+
     //auction
     function startAuction() external {
         auctionStarted = !auctionStarted;
@@ -97,11 +100,30 @@ contract Rental is IRental, Storage {
             0,
             address(0)
         );
+        IPUSHCommInterface(EPNS_COMM_ADDRESS).sendNotification(
+            0x15413cd3Bb0d8BCB88a70aE3679f68Dd7E5194Fb, // from channel
+            0x15413cd3Bb0d8BCB88a70aE3679f68Dd7E5194Fb, // to recipient, put address(this) in case you want Broadcast or Subset. For Targeted put the address to which you want to send
+            bytes(
+                string(
+                    // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                    abi.encodePacked(
+                        "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                        "+", // segregator
+                        "1", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targeted or subset)
+                        "+", // segregator
+                        "New Property Listed", // this is notification title
+                        "+", // segregator
+                        "The new property is listed in ", // notification body
+                        location // notification body
+                    )
+                )
+            )
+        );
         propertyIdToProperty[totalProperties] = property;
         ownerToPropertyIds[msg.sender].push(totalProperties);
     }
 
-    // function updateListingStatus(uint256 propertyId, bool listingStatus) external override {
+    // function updateListingStatus(uint256 propertyId, bool listingStatus) external   {
     //     Property storage property = propertyIdToProperty[propertyId];
     //     require(msg.sender == property.owner, "Only owner can update the listing status");
     //     property.propertyListingStatus = listingStatus;
@@ -115,7 +137,7 @@ contract Rental is IRental, Storage {
     //     emit updateListingStatusEvent(propertyId, property.owner, listingStatus);
     // }
 
-    function claimRent(uint256 propertyId) external override {
+    function claimRent(uint256 propertyId) external {
         Property memory property = propertyIdToProperty[propertyId];
         require(msg.sender == property.owner, "Only owner can claim the rent");
         require(property.rentPaid == true, "Error: Rent not paid");
@@ -177,6 +199,27 @@ contract Rental is IRental, Storage {
         require(property.rent <= msg.value, "Insufficient rent amount");
         property.rentPaid = true;
         tenantsRent[msg.sender] = msg.value;
+        // IPUSHCommInterface(EPNS_COMM_ADDRESS).sendNotification(
+        //     0x15413cd3Bb0d8BCB88a70aE36git79f68Dd7E5194Fb, // from channel
+        //     property.owner, // to recipient, put address(this) in case you want Broadcast or Subset. For Targeted put the address to which you want to send
+        //     bytes(
+        //         string(
+        //             // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+        //             abi.encodePacked(
+        //                 "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+        //                 "+", // segregator
+        //                 "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targeted or subset)
+        //                 "+", // segregator
+        //                 "Rent Paid", // this is notification title
+        //                 "+", // segregator
+        //                 "You just received the! ", // notification body
+        //                 " rent ", // notification body
+        //                 " for your property number",
+        //                 uint2str(propertyId) // notification body
+        //             )
+        //         )
+        //     )
+        // );
     }
 
     function confirmOccupation(uint256 propertyId) external payable {
@@ -242,7 +285,7 @@ contract Rental is IRental, Storage {
         return properties;
     }
 
-    function getListingByOwnerAddress(address _owner) external view override returns (Property[] memory) {
+    function getListingByOwnerAddress(address _owner) external view returns (Property[] memory) {
         uint256[] memory propertyIds = ownerToPropertyIds[_owner];
         Property[] memory properties = new Property[](propertyIds.length);
         for (uint256 i = 0; i < propertyIds.length; i++) {
@@ -251,7 +294,7 @@ contract Rental is IRental, Storage {
         return properties;
     }
 
-    function getRentStatus(uint256 propertyId) external view override returns (bool) {
+    function getRentStatus(uint256 propertyId) external view returns (bool) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.rentPaid;
     }
@@ -276,14 +319,33 @@ contract Rental is IRental, Storage {
         return (rentPaid, rentNotPaid);
     }
 
-    function getDueDate(uint256 propertyId) external view returns (uint256) {
+    function getDueDate(uint256 propertyId) external returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.rentPaidTimestamp + 30 days;
     }
 
-    function getAdvanceDueDate(uint256 propertyId) external view returns (uint256) {
+    function getAdvanceDueDate(uint256 propertyId) external returns (uint256) {
         Property memory property = propertyIdToProperty[propertyId];
         return property.securityDepositTimestamp + 15 days;
+    }
+
+    function uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len - 1;
+        while (_i != 0) {
+            bstr[k--] = bytes1(uint8(48 + _i % 10));
+            _i /= 10;
+        }
+        return string(bstr);
     }
 
     // Function to receive Ether. msg.data must be empty
