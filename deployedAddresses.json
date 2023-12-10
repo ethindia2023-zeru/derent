@@ -19,6 +19,14 @@
     "celo_alfajores": {
       "address": "0x137BfEb4A4f42a5B6c15fc8819bCb7c7954Eb9D4",
       "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
+    },
+    "base_testnet": {
+      "address": "0x1192255B2727baBf0c88257F5c8dFD46d4f1d536",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
+    },
+    "x1_testnet": {
+      "address": "0x8E6571c29526405FA4Cd3D1b4a6be513F2057a22",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
     }
   }
 }
