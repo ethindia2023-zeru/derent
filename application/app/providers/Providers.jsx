@@ -19,12 +19,6 @@ export function Providers({ children }) {
               borderRadius: "small",
               overlayBlur: "small",
             }),
-            darkMode: darkTheme({
-              accentColor: "#35f0d0",
-              accentColorForeground: "#1A1B1F",
-              borderRadius: "small",
-              overlayBlur: "small",
-            }),
           }}
           appInfo={{
             appName: "Derent",

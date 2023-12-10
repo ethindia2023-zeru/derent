@@ -5,6 +5,6 @@
 
 echo "SDC Done"
 
-# ./sart.sh /Users/akshaysp/Work/Zeru/Solidity/core-protocol-zeru-v1/artifacts /Users/akshaysp/Work/Zeru/Frontend/zeru_interface/app/artifacts
-# # Continue with your current script
-# echo "SART Done"
+./sart.sh /Users/akshaysp/Work/ethindia_hackathon/derent/artifacts /Users/akshaysp/Work/ethindia_hackathon/derent/application/artifacts
+# Continue with your current script
+echo "SART Done"

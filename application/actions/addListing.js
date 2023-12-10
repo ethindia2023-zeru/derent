@@ -2,23 +2,36 @@ import { commonActionSetup } from "./helper/commonHelper";
 
 export const addListing = async (
   signer,
+  propertyName,
+  address,
   advance,
   securityDeposit,
   rent,
   waitingPeriodSecurityDeposit,
   isAuction,
-  location,
 ) => {
+  console.log(
+    "addListing: ",
+    signer,
+    propertyName,
+    address,
+    advance,
+    securityDeposit,
+    rent,
+    waitingPeriodSecurityDeposit,
+    isAuction,
+  );
   try {
-    const rental_contract = commonActionSetup(signer);
+    const rental_contract = await commonActionSetup(signer);
 
-    const data = rental_contract.addListing(
+    const data = await rental_contract.addListing(
       advance,
       securityDeposit,
       rent,
       waitingPeriodSecurityDeposit,
       isAuction,
-      location,
+      address,
+      propertyName,
     );
     const txResult = await data.wait();
     console.log(txResult);

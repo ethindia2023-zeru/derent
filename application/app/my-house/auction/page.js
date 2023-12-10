@@ -12,8 +12,6 @@ import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 
 const page = () => {
-  const [advancePay, setAdvancePay] = useState(false);
-
   const dispatch = useDispatch();
   const propertyListing = useSelector(state => state.home.propertyListing);
 
@@ -47,7 +45,7 @@ const page = () => {
       {propertyListing &&
         propertyListing
           .filter(property => {
-            if (property.tenant == address && !property.isConfirmedOccupation) return true;
+            if (property.highestBidderTenant == address && !property.isConfirmedOccupation) return true;
             return false;
           })
           .map((property, index) => (
@@ -55,20 +53,12 @@ const page = () => {
               <Card className="w-auto" key={index}>
                 <CardHeader className="">
                   <CardTitle>Advance</CardTitle>
-                  <CardDescription>Pay your advance here</CardDescription>
+                  <CardDescription>Pay you advance here</CardDescription>
                 </CardHeader>
-                <CardContent className="w-[500px] flex flex-col space-between h-auto space-y-8">
-                  <div className="grid grid-cols-3 place-content-center">
+                <CardContent className="">
+                  <div className="grid grid-cols-3 mb-10 place-content-center">
                     <div className="flex flex-col">
-                      Name <span>{property.propertyName}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      Advance <span>{ethers.utils.formatEther(property.advance.toString())} ETH</span>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 place-content-cente">
-                    <div className="flex flex-col">
-                      Due Date<span>12-10-2020</span>
+                      Advance: <span>{ethers.utils.formatEther(property.advance.toString())}</span>
                     </div>
                   </div>
                 </CardContent>
