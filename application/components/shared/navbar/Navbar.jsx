@@ -165,7 +165,7 @@ export const Navbar = () => {
             <DropDown /> {/* <Link href="/post-for-rent"> */}
             <Dialog className="mt-5 my-auto w-fit">
               <DialogTrigger>
-                <Button className="py-2 px-2 rounded-[5px] text-white transition-opacity duration-300">
+                <Button className="py-3 px-3 rounded-[5px] text-white transition-opacity duration-300">
                   Post for rent
                 </Button>
               </DialogTrigger>
@@ -188,21 +188,23 @@ export const Navbar = () => {
                           required
                         />
                       </div>
-                      <div>
-                        <label htmlFor="cityState" className="block text-gray-700 text-sm font-bold mb-2">
-                          Rent
-                        </label>
-                        <input
-                          type="number"
-                          id="rent"
-                          name="rent"
-                          placeholder="Eth"
-                          value={formData.rent}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2 border rounded-md"
-                          required
-                        />
-                      </div>
+                      {!formData.isAuction && (
+                        <div>
+                          <label htmlFor="cityState" className="block text-gray-700 text-sm font-bold mb-2">
+                            Rent
+                          </label>
+                          <input
+                            type="number"
+                            id="rent"
+                            name="rent"
+                            placeholder="Eth"
+                            value={formData.rent}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded-md"
+                            required
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="mb-4">
@@ -295,7 +297,7 @@ export const Navbar = () => {
         )}
         {!isConnected && (
           <Button
-            className="py-2 px-2 rounded-[5px] text-white transition-opacity duration-300"
+            className="py-4 px-4 rounded-[5px] text-white transition-opacity duration-300"
             onClick={openConnectModal}
           >
             Post for rent

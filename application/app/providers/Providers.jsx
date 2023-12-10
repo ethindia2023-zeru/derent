@@ -14,8 +14,8 @@ export function Providers({ children }) {
           chains={chains}
           theme={{
             lightMode: lightTheme({
-              accentColor: "#ff77e1",
-              accentColorForeground: "#1A1B1F",
+              accentColor: "#F97D03",
+              accentColorForeground: "#ffffff",
               borderRadius: "small",
               overlayBlur: "small",
             }),
