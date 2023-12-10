@@ -2,23 +2,43 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react'
-import { location } from '@/assets'
+import { location, notification } from '@/assets'
 import { useRouter } from 'next/navigation';
 import { MdList,MdOutlineManageAccounts } from "react-icons/md";
 
 export const SideBarRentals = () => {
-    // a state to store the active state of the sidebar
-    const router=useRouter();
-    const [active,setActive]=useState("My Listing");
-    // a funciton to handle the navigation
-    const handleNavigate=(link)=>{
-        setActive(link);
+
+  // a state to store the active state of the sidebar
+  const router = useRouter();
+  const [active, setActive] = useState("My Listing");
+  // a funciton to handle the navigation
+  const handleNavigate = (link) => {
+    setActive(link.label)
+  }
+  const NAV_ICONS = [
+    {
+      label: "My Listing",
+      image: location,
+      link: "/my-rentals"
+    },
+    {
+      label: "Manage",
+      image: location,
+      link: "/my-rentals/dues"
+    },
+    {
+      label: "Notifications",
+      image: notification,
+      link: "/my-rentals/notifications"
     }
+  ]
+
 
   return (
     <div
-    className="md:flex h-[100vh] min-w-[250px] md:flex-col gap-10 hidden px-5 py-5 lg:flex lg:flex-col "
+      className="md:flex h-[100vh] min-w-[250px] md:flex-col gap-10 hidden px-5 py-5 lg:flex lg:flex-col "
     >
+
       {/* {
         NAV_ICONS.map((link)=>{
             return (
