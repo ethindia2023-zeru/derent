@@ -24,7 +24,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { loadPropertyListing } from "@/store/slices/homeSlice";
 import { bidOnProperty } from "@/actions/bidOnProperty";
 
-export default function Home() {
+export default function Home() 
+{
   const [searchTerm, setSearchTerm] = useState("");
   const [bid, setBid] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -105,27 +106,29 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* search bar */}
-      <div className="relative mx-auto w-fit mb-10">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-2 cursor-pointer" onClick={handleSearch}>
-          <Image src={search} alt="search" height={24} width={24} />
+    {/* home section */}
+       <div className="bg-shadcn-black text-shadcn-white py-8 mt-5">
+        <div className="container mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-5 text-[#3BA8AA]">DERENT</h2>
+          <h1 className="text-4xl text-[#F97D03] font-extrabold mb-8">Creating a Hassle-Free Renting Experience</h1>
+          <div className="flex gap-2 text-lg justify-center mt-10 mb-7 bg-gray text-[#666362]">
+            <div>
+              <span className="text-shadcn-white">Price Discovery</span> |
+            </div>
+            <div>
+              <span className="text-shadcn-white">Peer to Peer</span> |
+            </div>
+            <div>
+              <span className="text-shadcn-white">Zero Commission</span> |
+            </div>
+            <div>
+              <span className="text-shadcn-white">No Human Interaction</span>
+            </div>
+          </div>
         </div>
-        <div
-          className="absolute inset-y-0 right-0 flex items-center pr-2 hover:text-gray-700 cursor-pointer rounded-full "
-          onClick={handleSearch}
-        >
-          <Image src={filter} alt="search" height={24} width={24} />
-        </div>
-        <input
-          type="text"
-          className="mx-auto pl-12 w-[817px] bg-transparent pr-4 py-2 border border-gray-300 rounded-full outline-none"
-          placeholder="Search"
-          onKeyDown={e => e.key === "Enter" && handleSearch()}
-          onChange={handleInputChange}
-        />
       </div>
-      {/* tab section */}
-      <Tabs defaultValue="rent" className=" bg-transparent">
+          {/* tab section */}
+          <Tabs defaultValue="rent" className=" bg-transparent">
         <TabsList className="flex justify-center w-auto">
           <TabsTrigger className="w-[30%]" value="rent">
             Rent
@@ -299,6 +302,19 @@ export default function Home() {
           </div>
         </TabsContent>
       </Tabs>
+      {/* search bar */}
+      <div className="relative mx-auto w-fit mb-10">
+        <div className="absolute inset-y-0 left-2 flex items-center pl-2  cursor-pointer" onClick={handleSearch}>
+          <Image src={search} alt="search" height={24} width={24} />
+        </div>
+        <input
+          type="text"
+          className="mx-auto pl-14 w-[817px] bg-transparent pr-4 py-4 border border-gray-300 outline-none"
+          placeholder="Search"
+          onKeyDown={e => e.key === "Enter" && handleSearch()}
+          onChange={handleInputChange}
+        />
+      </div>
     </div>
   );
 }
