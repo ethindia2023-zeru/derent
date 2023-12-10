@@ -26,8 +26,7 @@ import { MdPriceCheck, MdOutlinePercent } from "react-icons/md";
 import { noHuman } from "@/assets";
 import { RiP2PFill } from "react-icons/ri";
 
-export default function Home() 
-{
+export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [bid, setBid] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -108,34 +107,41 @@ export default function Home()
 
   return (
     <div className="w-full">
-    {/* home section */}
-       <div className="bg-shadcn-black text-shadcn-white py-8 mt-5">
+      {/* home section */}
+      <div className="bg-shadcn-black text-shadcn-white py-8 mt-5">
         <div className="container mx-auto text-center">
           <h2 className="text-2xl font-bold mb-5 text-[#3BA8AA]">DERENT</h2>
           <h1 className="text-4xl text-[#F97D03] font-extrabold mb-8">Creating a Hassle-Free Renting Experience</h1>
           <div className="flex gap-2 text-lg justify-center mt-10 mb-7 bg-gray text-[#666362]">
             <div>
               <span className="text-shadcn-white flex justify-center items-center">
-              <MdPriceCheck size={24}/>
-               <span>Price Discovery </span> |
-              </span> 
+                <MdPriceCheck size={24} />
+                <span>Price Discovery </span> |
+              </span>
             </div>
             <div>
               <span className="text-shadcn-white flex justify-center items-center">
-              <RiP2PFill/> Peer to Peer |</span> 
+                <RiP2PFill /> Peer to Peer |
+              </span>
             </div>
             <div>
-              <span className="text-shadcn-white flex items-center justify-center"> <MdOutlinePercent/> Zero Commission |</span> 
+              <span className="text-shadcn-white flex items-center justify-center">
+                {" "}
+                <MdOutlinePercent /> Zero Commission |
+              </span>
             </div>
             <div>
               <span className="text-shadcn-white flex ">
-              <Image width={24} src={noHuman}></Image> No Human Interaction</span>
+                <Image width={24} src={noHuman}></Image> No Human Interaction
+              </span>
             </div>
           </div>
         </div>
       </div>
-          {/* tab section */}
-          <Tabs defaultValue="rent" className=" bg-transparent">
+      {/* tab section */}
+      <div></div>
+      <div></div>
+      <Tabs defaultValue="rent" className=" bg-transparent">
         <TabsList className="flex justify-center w-auto">
           <TabsTrigger className="w-[30%]" value="rent">
             Rent
@@ -144,6 +150,18 @@ export default function Home()
             Auction
           </TabsTrigger>
         </TabsList>
+        <div className="relative mx-auto w-fit mb-10">
+          <div className="absolute inset-y-0 left-2 flex items-center pl-2  cursor-pointer" onClick={handleSearch}>
+            <Image src={search} alt="search" height={24} width={24} />
+          </div>
+          <input
+            type="text"
+            className="mx-auto pl-14 w-[817px] bg-transparent pr-4 py-4 border border-gray-300 outline-none"
+            placeholder="Search"
+            onKeyDown={e => e.key === "Enter" && handleSearch()}
+            onChange={handleInputChange}
+          />
+        </div>
         <TabsContent value="rent">
           <div className="mx-5 my-5 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 place-content-center w-full gap-1">
             {propertyListing &&
@@ -310,18 +328,6 @@ export default function Home()
         </TabsContent>
       </Tabs>
       {/* search bar */}
-      <div className="relative mx-auto w-fit mb-10">
-        <div className="absolute inset-y-0 left-2 flex items-center pl-2  cursor-pointer" onClick={handleSearch}>
-          <Image src={search} alt="search" height={24} width={24} />
-        </div>
-        <input
-          type="text"
-          className="mx-auto pl-14 w-[817px] bg-transparent pr-4 py-4 border border-gray-300 outline-none"
-          placeholder="Search"
-          onKeyDown={e => e.key === "Enter" && handleSearch()}
-          onChange={handleInputChange}
-        />
-      </div>
     </div>
   );
 }

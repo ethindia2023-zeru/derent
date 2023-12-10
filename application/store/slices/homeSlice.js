@@ -22,32 +22,37 @@ export const loadPropertyListing = createAsyncThunk("home/loadPropertyListing", 
   try {
     const propertyListingOriginal = await rental_contract.getAllPropertyListings();
     const propertyListingsTemp = [];
+    console.log("propertyListingOriginal: ", propertyListingOriginal);
 
-    for (let i = 0; i < propertyListingOriginal.length; i++) {
+    for (let i = 1; i <= propertyListingOriginal.length; i++) {
       const propertyListing = propertyListingOriginal[i];
-      propertyListingsTemp.push({
-        propertyName: propertyListing.propertyName,
-        advance: parseFloat(propertyListing.advance.toString()),
-        bid: parseFloat(propertyListing.bid.toString()),
-        highestBidderTenant: propertyListing.highestBidderTenant,
-        isAuction: propertyListing.isAuction,
-        isConfirmedByOwner: propertyListing.isConfirmedByOwner,
-        isConfirmedByTenant: propertyListing.isConfirmedByTenant,
-        isConfirmedOccupation: propertyListing.isConfirmedOccupation,
-        isReserved: propertyListing.isReserved,
-        owner: propertyListing.owner,
-        propertyId: parseFloat(propertyListing.propertyId.toString()),
-        propertyListingStatus: propertyListing.propertyListingStatus,
-        propertyLocation: propertyListing.propertyLocation,
-        rent: parseFloat(propertyListing.rent.toString()),
-        rentPaid: propertyListing.rentPaid,
-        rentPaidTimestamp: parseFloat(propertyListing.rentPaidTimestamp.toString()),
-        securityDeposit: parseFloat(propertyListing.securityDeposit.toString()),
-        securityDepositClaimedStatus: propertyListing.securityDepositClaimedStatus,
-        securityDepositTimestamp: parseFloat(propertyListing.securityDepositTimestamp.toString()),
-        tenant: propertyListing.tenant,
-        waitingPeriodSecurityDeposit: propertyListing.waitingPeriodSecurityDeposit.toString(),
-      });
+      if (propertyListing) {
+        if (propertyListing.propertyName) {
+          propertyListingsTemp.push({
+            propertyName: propertyListing.propertyName,
+            advance: parseFloat(propertyListing.advance.toString()),
+            bid: parseFloat(propertyListing.bid.toString()),
+            highestBidderTenant: propertyListing.highestBidderTenant,
+            isAuction: propertyListing.isAuction,
+            isConfirmedByOwner: propertyListing.isConfirmedByOwner,
+            isConfirmedByTenant: propertyListing.isConfirmedByTenant,
+            isConfirmedOccupation: propertyListing.isConfirmedOccupation,
+            isReserved: propertyListing.isReserved,
+            owner: propertyListing.owner,
+            propertyId: parseFloat(propertyListing.propertyId.toString()),
+            propertyListingStatus: propertyListing.propertyListingStatus,
+            propertyLocation: propertyListing.propertyLocation,
+            rent: parseFloat(propertyListing.rent.toString()),
+            rentPaid: propertyListing.rentPaid,
+            rentPaidTimestamp: parseFloat(propertyListing.rentPaidTimestamp.toString()),
+            securityDeposit: parseFloat(propertyListing.securityDeposit.toString()),
+            securityDepositClaimedStatus: propertyListing.securityDepositClaimedStatus,
+            securityDepositTimestamp: parseFloat(propertyListing.securityDepositTimestamp.toString()),
+            tenant: propertyListing.tenant,
+            waitingPeriodSecurityDeposit: propertyListing.waitingPeriodSecurityDeposit.toString(),
+          });
+        }
+      }
     }
 
     console.log("propertyListingsTemp: ", propertyListingsTemp);
