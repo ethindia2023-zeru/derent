@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import { search, filter } from "@/assets";
-import { houseData, auctionData } from "@/data";
 import { RentCard } from "@/components/home/RentCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -23,6 +22,9 @@ import { GetTransactionProvider } from "@/helpers/wallet/GetTransactionProvider"
 import { useToast } from "@/components/ui/use-toast";
 import { loadPropertyListing } from "@/store/slices/homeSlice";
 import { bidOnProperty } from "@/actions/bidOnProperty";
+import { MdPriceCheck, MdOutlinePercent } from "react-icons/md";
+import { noHuman } from "@/assets";
+import { RiP2PFill } from "react-icons/ri";
 
 export default function Home() 
 {
@@ -113,16 +115,21 @@ export default function Home()
           <h1 className="text-4xl text-[#F97D03] font-extrabold mb-8">Creating a Hassle-Free Renting Experience</h1>
           <div className="flex gap-2 text-lg justify-center mt-10 mb-7 bg-gray text-[#666362]">
             <div>
-              <span className="text-shadcn-white">Price Discovery</span> |
+              <span className="text-shadcn-white flex justify-center items-center">
+              <MdPriceCheck size={24}/>
+               <span>Price Discovery </span> |
+              </span> 
             </div>
             <div>
-              <span className="text-shadcn-white">Peer to Peer</span> |
+              <span className="text-shadcn-white flex justify-center items-center">
+              <RiP2PFill/> Peer to Peer |</span> 
             </div>
             <div>
-              <span className="text-shadcn-white">Zero Commission</span> |
+              <span className="text-shadcn-white flex items-center justify-center"> <MdOutlinePercent/> Zero Commission |</span> 
             </div>
             <div>
-              <span className="text-shadcn-white">No Human Interaction</span>
+              <span className="text-shadcn-white flex ">
+              <Image width={24} src={noHuman}></Image> No Human Interaction</span>
             </div>
           </div>
         </div>
