@@ -13,6 +13,7 @@
     "tasks": "npx hardhat run --network coverage scripts/tasks/rental.ts",
     "deployTask": "hardhat --network coverage deploy",
     "deploy-scroll": "npx hardhat run --network scroll_testnet scripts/deploy.ts",
+    "deploy-celo": "npx hardhat run --network scroll_testnet scripts/deploy.ts",
     "node": "npx hardhat node"
   },
   "author": "ethindia2023-zeru",
