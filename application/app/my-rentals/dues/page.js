@@ -73,11 +73,11 @@ const page = () => {
           })
           .map((property, index) => (
             <Table className="w-fit mx-auto" key={index}>
-              <TableCaption key={index} className=" w-[900px]"></TableCaption>
+              <TableCaption key={index} className="w-[900px]"></TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>House</TableHead>
-                  <TableHead>Location</TableHead>
+                  <TableHead>Rent</TableHead>
                   <TableHead>Rent Status</TableHead>
                 </TableRow>
               </TableHeader>
