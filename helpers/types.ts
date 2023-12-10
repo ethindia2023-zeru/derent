@@ -11,7 +11,7 @@ export enum eNetworks {
   hardhat = "hardhat",
   mantle_testnet = "mantle_testnet",
   base_testnet = "base_testnet",
-  zetachain_testnet = "zetachain_testnet",
+  celo_alfajores = "celo_alfajores",
   x1_testnet = "x1_testnet",
 }
 

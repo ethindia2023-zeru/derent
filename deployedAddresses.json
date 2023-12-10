@@ -1,8 +1,24 @@
 {
   "Rental": {
     "coverage": {
-      "address": "0x7c2C195CD6D34B8F845992d380aADB2730bB9C6F",
+      "address": "0x1A1FEe7EeD918BD762173e4dc5EfDB8a78C924A8",
       "deployer": "0xc783df8a850f42e7F7e57013759C285caa701eB6"
+    },
+    "arbitrumGoerli": {
+      "address": "0x7C881d0B25b42665DFC14F9351cfc0246cf367F2",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
+    },
+    "undefined": {
+      "address": "0x137BfEb4A4f42a5B6c15fc8819bCb7c7954Eb9D4",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
+    },
+    "scroll_testnet": {
+      "address": "0x1192255B2727baBf0c88257F5c8dFD46d4f1d536",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
+    },
+    "celo_alfajores": {
+      "address": "0x137BfEb4A4f42a5B6c15fc8819bCb7c7954Eb9D4",
+      "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
     }
   }
 }

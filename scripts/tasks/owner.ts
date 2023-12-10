@@ -19,7 +19,7 @@ export async function testOwnerFunctions(testToken: Contract) {
   // tenant pays rent
   // owner claim rent
   await testToken
-    .connect(owner)
+    .connect(deployer)
     .addListing(advance, securityDeposit, rent, waitingPeriod, false, location, propertyName);
   console.log("added the listing");
 
@@ -42,10 +42,10 @@ export async function testOwnerFunctions(testToken: Contract) {
   // // owner will claim the security deposit by calling
   // //raiseDisputeSecurityDeposit
 
-  await testToken
-    .connect(owner)
-    .addListing(advance, securityDeposit, rent, waitingPeriod, false, location, propertyName);
-  console.log("added the listing");
+  // await testToken
+  //   .connect(owner)
+  //   .addListing(advance, securityDeposit, rent, waitingPeriod, false, location, propertyName);
+  // console.log("added the listing");
 
   // await testToken.connect(tenant).paySecurityDeposit(2, { value: securityDeposit });
   // console.log("after paying the security deposit");
@@ -68,10 +68,10 @@ export async function testOwnerFunctions(testToken: Contract) {
   // // tenant 2 bids on the auction
   // // wins, bid on property, getBit winner for property
 
-  await testToken
-    .connect(owner)
-    .addListing(advance, securityDeposit, rent, waitingPeriod, true, location, propertyName);
-  console.log("added the listing");
+  // await testToken
+  //   .connect(owner)
+  //   .addListing(advance, securityDeposit, rent, waitingPeriod, true, location, propertyName);
+  // console.log("added the listing");
 
   // await testToken.connect(tenant).paySecurityDeposit(3, { value: securityDeposit });
   // console.log("after paying the security deposit");
@@ -114,10 +114,10 @@ export async function testOwnerFunctions(testToken: Contract) {
   // // tenant 2 bids on the auction
   // // wins, bid on property, getBit winner for property
 
-  await testToken
-    .connect(owner)
-    .addListing(advance, securityDeposit, rent, waitingPeriod, true, location, propertyName);
-  console.log("added the listing");
+  // await testToken
+  //   .connect(owner)
+  //   .addListing(advance, securityDeposit, rent, waitingPeriod, true, location, propertyName);
+  // console.log("added the listing");
 
   // await testToken.connect(tenant).paySecurityDeposit(4, { value: securityDeposit });
   // console.log("after paying the security deposit");
@@ -148,27 +148,27 @@ export async function testOwnerFunctions(testToken: Contract) {
   // bidder = await testToken.connect(owner).getBidWinnerForProperty(4);
   // console.log("winner of the bid", bidder);
 
-  //get all properties listing
-  const allProperties = await testToken.getAllPropertyListings();
-  console.log("All properties are :", allProperties);
+  // //get all properties listing
+  // const allProperties = await testToken.getAllPropertyListings();
+  // console.log("All properties are :", allProperties);
 
-  // get listing by owneraddress
-  const allPropertiesByOwner = await testToken.getListingByOwnerAddress(owner.address);
-  console.log("AllPropertiesByOwner are :", allPropertiesByOwner);
+  // // get listing by owneraddress
+  // const allPropertiesByOwner = await testToken.getListingByOwnerAddress(owner.address);
+  // console.log("AllPropertiesByOwner are :", allPropertiesByOwner);
 
-  // get rent status
-  const rentStatus = await testToken.getRentStatus(1);
-  console.log("getRentStatus 1 :", rentStatus);
+  // // get rent status
+  // const rentStatus = await testToken.getRentStatus(1);
+  // console.log("getRentStatus 1 :", rentStatus);
 
-  // get rent status by owneraddress
-  const rentStatusByOwnerAddress = await testToken.connect(owner).getRentStatusByOwnerAddress(owner.address);
-  console.log("rentStatusByOwnerAddress  :", rentStatusByOwnerAddress);
+  // // get rent status by owneraddress
+  // const rentStatusByOwnerAddress = await testToken.connect(owner).getRentStatusByOwnerAddress(owner.address);
+  // console.log("rentStatusByOwnerAddress  :", rentStatusByOwnerAddress);
 
-  //get due date
-  const dueDate = await testToken.getDueDate(1);
-  console.log("dueDate  :", dueDate);
+  // //get due date
+  // const dueDate = await testToken.getDueDate(1);
+  // console.log("dueDate  :", dueDate);
 
-  // get advance due date
-  const dueDateAdvance = await testToken.getAdvanceDueDate(1);
-  console.log("dueDateAdvance  :", dueDateAdvance);
+  // // get advance due date
+  // const dueDateAdvance = await testToken.getAdvanceDueDate(1);
+  // console.log("dueDateAdvance  :", dueDateAdvance);
 }

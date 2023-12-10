@@ -12,6 +12,10 @@ export const ChainIdsToNetwork = (number: number): string | undefined => {
     31337: "coverage",
     97: "testbsc",
     421613: "arbitrumGoerli",
+    84531: "base_testnet",
+    44787: "celo_alfajores",
+    195: "x1_testnet",
+    534351: "scroll_testnet",
   };
   return chainids[number];
 };

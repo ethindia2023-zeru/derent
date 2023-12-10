@@ -27,10 +27,10 @@ const chainIds = {
   rinkeby: 4,
   ropsten: 3,
   arbitrum_goerli: 421613,
-  scroll_testnet: 534353,
+  scroll_testnet: 534351,
   mantle_testnet: 5001,
   base_testnet: 84531,
-  zetachain_testnet: 7001,
+  celo_alfajores: 44787,
   x1_testnet: 195,
 };
 
@@ -85,10 +85,10 @@ const getCommonNetworkConfig = (networkName: eNetworks, networkId: number) => ({
 
 const RPC: { [key: string]: string } = {
   arbitrum_goerli: "https://goerli-rollup.arbitrum.io/rpc",
-  scroll_testnet: "https://alpha-rpc.scroll.io/l2",
+  scroll_testnet: "https://sepolia-rpc.scroll.io",
   mantle_testnet: "https://rpc.testnet.mantle.xyz",
   base_testnet: "https://goerli.base.org",
-  zetachain_testnet: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
+  celo_alfajores: "https://alfajores-forno.celo-testnet.org",
   x1_testnet: "https://x1testrpc.okx.com",
 };
 
@@ -135,7 +135,7 @@ const config: HardhatUserConfig = {
     scroll_testnet: getCommonNetworkConfig(eNetworks.scroll_testnet, chainIds.scroll_testnet),
     mantle_testnet: getCommonNetworkConfig(eNetworks.mantle_testnet, chainIds.mantle_testnet),
     base_testnet: getCommonNetworkConfig(eNetworks.base_testnet, chainIds.base_testnet),
-    zetachain_testnet: getCommonNetworkConfig(eNetworks.zetachain_testnet, chainIds.zetachain_testnet),
+    celo_alfajores: getCommonNetworkConfig(eNetworks.celo_alfajores, chainIds.celo_alfajores),
     x1_testnet: getCommonNetworkConfig(eNetworks.x1_testnet, chainIds.x1_testnet),
   },
   solidity: {
