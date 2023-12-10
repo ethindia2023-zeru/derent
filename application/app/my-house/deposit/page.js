@@ -55,12 +55,20 @@ const page = () => {
               <Card className="w-auto" key={index}>
                 <CardHeader className="">
                   <CardTitle>Advance</CardTitle>
-                  <CardDescription>Pay you advance here</CardDescription>
+                  <CardDescription>Pay your advance here</CardDescription>
                 </CardHeader>
-                <CardContent className="">
-                  <div className="grid grid-cols-3 mb-10 place-content-center">
+                <CardContent className="w-[500px] flex flex-col space-between h-auto space-y-8">
+                  <div className="grid grid-cols-3 place-content-center">
                     <div className="flex flex-col">
-                      Advance: <span>{ethers.utils.formatEther(property.advance.toString())}</span>
+                      Name <span>{property.propertyName}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      Advance <span>{ethers.utils.formatEther(property.advance.toString())} ETH</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 place-content-cente">
+                    <div className="flex flex-col">
+                      Due Date<span>12-10-2020</span>
                     </div>
                   </div>
                 </CardContent>

@@ -74,34 +74,34 @@ const page = () => {
             <div key={index} className="flex justify-center">
               <Card className="">
                 <CardHeader className="">
-                  <CardTitle>Rent</CardTitle>
-                  <CardDescription>Pay you rent with just one click</CardDescription>
+                  <CardTitle>Rented</CardTitle>
+                  <CardDescription>Pay your rent with just one click</CardDescription>
                 </CardHeader>
-                <CardContent className="">
-                  <div className="grid grid-cols-3 mb-32 place-content-center">
+                <CardContent className="w-[500px] flex flex-col space-between h-auto space-y-8">
+                  <div className="grid grid-cols-3 place-content-center">
                     <div className="flex flex-col">
-                      Due Date: <span>Due Date</span>
+                      Name: <span>{property.propertyName}</span>
                     </div>
                     <div className="flex flex-col">
-                      Advance: <span>₹Advance</span>
+                      Advance: <span>{ethers.utils.formatEther(property.advance.toString())} ETH</span>
                     </div>
                     <div className="flex flex-col">
-                      Initial Deposit: <span>₹house.initialdeposit</span>
+                      Initial Deposit: <span>{ethers.utils.formatEther(property.securityDeposit.toString())} ETH</span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 mb-10 mx-auto">
+                  <div className="grid grid-cols-3 place-content-cente">
                     <div className="flex flex-col">
-                      Rent: <span>₹Rent</span>
+                      Rent: <span>{ethers.utils.formatEther(property.rent.toString())} ETH</span>
                     </div>
                     <div className="flex flex-col">
-                      Status <span>Due</span>
+                      Status <span>{property.rentPaid ? "Paid" : "Due"}</span>
                     </div>
                     <div className="flex flex-col">
                       Due Date:<span>12-10-2020</span>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="">
+                <CardFooter className="flex items-center justify-center gap-6">
                   <Button className="" onClick={() => handlePayRent(property.propertyId, property.rent)}>
                     Pay Rent
                   </Button>

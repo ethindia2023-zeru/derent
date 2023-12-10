@@ -235,7 +235,7 @@ contract Rental is IRental, Storage {
     //commonGetFunctions
     function getAllPropertyListings() external view returns (Storage.Property[] memory) {
         Storage.Property[] memory properties = new Storage.Property[](totalProperties);
-        for (uint256 i = 0; i < totalProperties; i++) {
+        for (uint256 i = 0; i <= totalProperties; i++) {
             Storage.Property storage property = propertyIdToProperty[i];
             properties[i] = property;
         }

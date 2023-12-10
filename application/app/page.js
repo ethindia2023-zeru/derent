@@ -224,7 +224,6 @@ export default function Home()
               Object.values(propertyListing)
                 .filter(house => {
                   if (house.isReserved) return false;
-                  if (house.propertyId == 0) return false;
                   if (!house.isAuction) return false;
                   return true;
                 })
