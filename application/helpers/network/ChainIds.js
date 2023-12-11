@@ -1,4 +1,4 @@
-export const ChainIdsToNetwork = (number) => {
+export const ChainIdsToNetwork = number => {
   let chainids = {
     42: "kovan",
     3: "ropsten",
@@ -12,6 +12,8 @@ export const ChainIdsToNetwork = (number) => {
     31337: "coverage",
     97: "testbsc",
     421613: "arbitrumGoerli",
+    195: "x1_testnet",
+    84531: "base_testnet",
   };
   return chainids[number];
 };

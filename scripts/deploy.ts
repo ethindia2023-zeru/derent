@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     address: rentalContract.address,
     deployer: await deployer.getAddress(),
   };
-  await testOwnerFunctions(rentalContract);
+  //await testOwnerFunctions(rentalContract);
   // Add the address for the 'arbitrum' chain here
   // contractAddresses["Rental"]["arbitrum"] = {
   //   "address": rentalContract.address,

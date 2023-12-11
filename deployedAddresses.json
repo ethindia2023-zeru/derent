@@ -1,7 +1,7 @@
 {
   "Rental": {
     "coverage": {
-      "address": "0x1A1FEe7EeD918BD762173e4dc5EfDB8a78C924A8",
+      "address": "0x500D1d6A4c7D8Ae28240b47c8FCde034D827fD5e",
       "deployer": "0xc783df8a850f42e7F7e57013759C285caa701eB6"
     },
     "arbitrumGoerli": {
@@ -25,7 +25,7 @@
       "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
     },
     "x1_testnet": {
-      "address": "0x8E6571c29526405FA4Cd3D1b4a6be513F2057a22",
+      "address": "0x1192255B2727baBf0c88257F5c8dFD46d4f1d536",
       "deployer": "0x331B9B2f86eA1D4491485b3A84B15a84c4C3478C"
     }
   }

@@ -6,10 +6,9 @@ Welcome to our Decentralized Renting Platform, a revolutionary solution for seam
 
 ## Features
 
-- *Decentralization:* Utilizing chains like Arbitrum, Base, Scroll, Celo, and OKX X1 for robust and secure operations.
-- *Chainlink Automation:* Auction unoccupied properties automatically for efficiency.
-- *Push Protocol:* Enable cross-chain notifications for property discovery and updates.
-- *Alliance Integration:* Showcase our unique product to the Alliance community.
+- _Decentralization:_ Utilizing chains like Arbitrum, Base, Scroll, Celo, and OKX X1 for robust and secure operations.
+- _Chainlink Automation:_ Auction unoccupied properties automatically for efficiency.
+- _Push Protocol:_ Enable cross-chain notifications for property discovery and updates.
 
 ## Setup
 
@@ -29,6 +28,9 @@ Follow these steps to set up the project locally:
    Scroll : npm run deploy-scroll
    Celo : npm run deploy-celo
    OKX x1 : npm run deploy-x1
+
+   before this below command update the path inside that to point towards artifacts and deployed contracts address files
+   `./copyDepConAndArt.sh`
 
 2. Integrate Chainlink for automated property calls.
    Start here:
@@ -72,6 +74,6 @@ This project is open-source under MIT.
 
 ## Contact
 
-For inquiries or collaboration opportunities, contact us at support@zeru.finance.
+For inquiries or collaboration opportunities, contact us at 3litedev@gmail.com
 
 ---
